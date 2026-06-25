@@ -18,5 +18,5 @@ qdrant-client[fastembed]~=1.18.0
 tiktoken~=0.13.0
 google-genai~=2.10.0
 openai~=2.44.0
-markitdown[pdf,llm]~=0.1.6
+markitdown[pdf]~=0.1.6
 PyMuPDF~=1.27.2
