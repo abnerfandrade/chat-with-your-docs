@@ -1,6 +1,7 @@
 from pathlib import Path
 
-from src.core.logger import logger
+from loguru import logger
+
 from src.services.document_extractor.extractors.extractor_factory import get_extractor
 
 

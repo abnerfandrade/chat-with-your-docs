@@ -4,8 +4,8 @@ from textwrap import dedent
 
 import fitz
 from markitdown import MarkItDown
+from loguru import logger
 
-from src.core.logger import logger
 from src.services.document_extractor.extractors.base_extractor import BaseExtractor
 
 
