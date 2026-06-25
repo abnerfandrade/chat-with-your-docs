@@ -4,7 +4,8 @@ from functools import lru_cache
 from typing import Any, TYPE_CHECKING
 
 from langchain.agents import create_agent
-from langchain_core.messages import AIMessage
+from langchain_core.messages import AIMessage, AIMessageChunk
+from langgraph.config import get_stream_writer
 from loguru import logger
 
 from src.agents.llm import get_llm
@@ -29,18 +30,30 @@ def get_answer_agent():
     )
 
 
-def _extract_answer_agent_result(result: Any) -> AnswerAgentResult:
-    if isinstance(result, AnswerAgentResult):
-        return result
+def _extract_stream_text(chunk: Any) -> str:
+    if isinstance(chunk, AIMessageChunk):
+        content = chunk.content
+    else:
+        content = getattr(chunk, "content", "")
 
-    if isinstance(result, dict):
-        structured_response = result.get("structured_response")
-        if isinstance(structured_response, AnswerAgentResult):
-            return structured_response
-        if isinstance(structured_response, dict):
-            return AnswerAgentResult.model_validate(structured_response)
+    if isinstance(content, str):
+        return content
 
-    raise ValueError("Answer agent did not return a valid structured response")
+    if isinstance(content, list):
+        parts: list[str] = []
+        for item in content:
+            if isinstance(item, str):
+                parts.append(item)
+                continue
+
+            if isinstance(item, dict):
+                text = item.get("text")
+                if isinstance(text, str):
+                    parts.append(text)
+
+        return "".join(parts)
+
+    return ""
 
 
 async def answer_agent_node(state: ChatGraphState) -> dict[str, Any]:
@@ -48,8 +61,27 @@ async def answer_agent_node(state: ChatGraphState) -> dict[str, Any]:
     log.debug("Invoking answer agent node")
 
     agent = get_answer_agent()
-    raw_result = await agent.ainvoke({"messages": state.get("messages", [])})
-    answer_result = _extract_answer_agent_result(raw_result)
+    writer = get_stream_writer()
+
+    raw_result: dict | None = None
+    async for mode, payload in agent.astream(
+        {"messages": state.get("messages", [])},
+        stream_mode=["messages", "values"],
+    ):
+        if mode == "messages":
+            message_chunk, _ = payload
+            text = _extract_stream_text(message_chunk)
+            if text:
+                writer({"event": "content", "text": text})
+            continue
+
+        if mode == "values":
+            raw_result = payload
+
+    if raw_result is None:
+        raise ValueError("Answer agent stream completed without a final state")
+
+    answer_result: AnswerAgentResult = raw_result["structured_response"]
 
     updates: dict[str, Any] = {
         "answer_text": answer_result.answer_text,

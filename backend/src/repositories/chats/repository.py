@@ -50,6 +50,8 @@ class ChatRepository(BaseRepository[Chat, ChatCreate, ChatUpdate, ChatFilters]):
                     if value is not None:
                         query = apply_filter(value)
 
+            query = query.order_by(Chat.created_at.desc())
+
             result = await self.session.execute(query)
 
             return list(result.scalars().all())
