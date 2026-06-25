@@ -49,6 +49,14 @@ class FakeUploadFile:
         return self._content
 
 
+class FakeBackgroundTasks:
+    def __init__(self):
+        self.tasks = []
+
+    def add_task(self, func, *args, **kwargs):
+        self.tasks.append((func, args, kwargs))
+
+
 def build_upload_file(filename: str, content: bytes, content_type: str) -> FakeUploadFile:
     return FakeUploadFile(
         filename=filename,
@@ -93,10 +101,12 @@ async def test_list_documents_returns_serialized_documents():
 @pytest.mark.asyncio
 async def test_upload_document_rejects_unsupported_extension():
     stub_repo = StubDocumentRepository()
+    background_tasks = FakeBackgroundTasks()
 
     with pytest.raises(HTTPException) as exc_info:
         await upload_document(
             file=build_upload_file("notes.csv", b"content", "text/csv"),
+            background_tasks=background_tasks,
             document_repo=stub_repo,
         )
 
@@ -118,10 +128,12 @@ async def test_upload_document_rejects_duplicate_hash():
         updated_at=None,
     )
     stub_repo = StubDocumentRepository(existing_by_hash=existing)
+    background_tasks = FakeBackgroundTasks()
 
     with pytest.raises(HTTPException) as exc_info:
         await upload_document(
             file=build_upload_file("existing.pdf", b"same-content", "application/pdf"),
+            background_tasks=background_tasks,
             document_repo=stub_repo,
         )
 
@@ -143,9 +155,11 @@ async def test_upload_document_accepts_valid_file_and_persists_queued_record():
         updated_at=None,
     )
     stub_repo = StubDocumentRepository(created_document=created)
+    background_tasks = FakeBackgroundTasks()
 
     response = await upload_document(
         file=build_upload_file("doc.txt", b"hello world", "text/plain"),
+        background_tasks=background_tasks,
         document_repo=stub_repo,
     )
 
@@ -153,5 +167,11 @@ async def test_upload_document_accepts_valid_file_and_persists_queued_record():
     assert response.filename == "doc.txt"
     assert response.status == "queued"
     assert len(stub_repo.create_calls) == 1
+    assert len(background_tasks.tasks) == 1
+    _, args, kwargs = background_tasks.tasks[0]
+    assert args == ()
+    assert kwargs["document_id"] == created.id
+    assert kwargs["filename"] == "doc.txt"
+    assert kwargs["content"] == b"hello world"
     _, commit = stub_repo.create_calls[0]
     assert commit is True

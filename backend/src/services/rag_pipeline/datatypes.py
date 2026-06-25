@@ -15,3 +15,11 @@ class ChunkMetadata(BaseModel):
 class ChunkDocument(BaseModel):
     content: str = Field(..., min_length=1, description="Chunk text content")
     metadata: ChunkMetadata = Field(..., description="Chunk metadata")
+
+
+class RagPipelineResult(BaseModel):
+    document_id: UUID = Field(..., description="Processed document identifier")
+    filename: str = Field(..., description="Original uploaded filename")
+    char_count: int = Field(..., ge=0, description="Extracted character count")
+    chunk_count: int = Field(..., ge=0, description="Generated chunk count")
+    stored_count: int = Field(..., ge=0, description="Stored vector count")

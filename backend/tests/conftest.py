@@ -74,6 +74,7 @@ def mock_embeddings(mocker):
 @pytest.fixture
 def fake_vector_store(mocker):
     store = mocker.Mock(name="fake_vector_store")
+    store.collection_name = "chat_with_your_docs_test"
     store.add_documents = mocker.Mock()
     store.similarity_search = mocker.Mock(return_value=[])
     return store

@@ -1,11 +1,19 @@
 import hashlib
 
-from fastapi import APIRouter, Depends, FastAPI, File, HTTPException, UploadFile
+from fastapi import (
+    APIRouter,
+    BackgroundTasks,
+    Depends,
+    FastAPI,
+    File,
+    HTTPException,
+    UploadFile,
+)
 
 from src.core.config import settings
 from src.repositories.documents import DocumentCreate, DocumentRepository
 from src.routes.documents.datatypes import DocumentResponse, UploadResponse
-from src.routes.documents.service import SUPPORTED_EXTENSIONS
+from src.routes.documents.service import SUPPORTED_EXTENSIONS, run_pipeline_background
 
 router = APIRouter(prefix="/documents", tags=["documents"])
 
@@ -38,6 +46,7 @@ async def list_documents(
 
 @router.post("/upload", response_model=UploadResponse, status_code=202)
 async def upload_document(
+    background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
     document_repo: DocumentRepository = Depends(DocumentRepository),
 ) -> UploadResponse:
@@ -86,6 +95,13 @@ async def upload_document(
             status="queued",
         ),
         commit=True,
+    )
+
+    background_tasks.add_task(
+        run_pipeline_background,
+        document_id=created.id,
+        filename=filename,
+        content=content,
     )
 
     return UploadResponse(
