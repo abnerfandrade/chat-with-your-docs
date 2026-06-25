@@ -23,6 +23,11 @@ def mock_settings(monkeypatch):
     monkeypatch.setattr(settings, "QDRANT_VECTOR_SIZE", 1536)
     monkeypatch.setattr(settings, "CHUNK_SIZE_TOKENS", 1000)
     monkeypatch.setattr(settings, "CHUNK_OVERLAP_TOKENS", 150)
+    monkeypatch.setattr(
+        settings,
+        "CORS_ALLOW_ORIGINS",
+        ["http://localhost:5173", "http://127.0.0.1:5173"],
+    )
 
 
 @pytest.fixture
