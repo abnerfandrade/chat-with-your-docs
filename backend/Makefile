@@ -2,8 +2,9 @@ VENV = venv
 PIP = $(VENV)/bin/pip
 UVICORN = $(VENV)/bin/uvicorn
 PYTEST = $(VENV)/bin/pytest
+ALEMBIC = $(VENV)/bin/alembic
 
-.PHONY: install install-dev dev infra-up infra-down up down logs tests
+.PHONY: install install-dev dev infra-up infra-down up down logs tests migrate migrate-docker
 
 install:
 	$(PIP) install -r requirements.txt
@@ -31,3 +32,9 @@ logs:
 
 tests:
 	$(PYTEST) -vvl tests
+
+migrate:
+	PYTHONPATH=. $(ALEMBIC) upgrade head
+
+migrate-docker:
+	docker compose exec api bash -c "PYTHONPATH=. alembic upgrade head"
