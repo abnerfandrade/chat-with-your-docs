@@ -1,3 +1,5 @@
+import pytest
+from langchain_core.messages import HumanMessage
 from langchain.agents.middleware import (
     ModelCallLimitMiddleware,
     ToolCallLimitMiddleware,
@@ -38,7 +40,13 @@ def test_logging_middleware_logs_before_and_after_agent(mocker):
         "src.agents.answer_agent.middlewares.logger.bind",
         return_value=bound_logger,
     )
-    state = {"messages": ["m1", "m2"]}
+    state = {
+        "messages": [HumanMessage(content="What is the remote work policy?")],
+        "structured_response": mocker.Mock(
+            answer_text="Remote work requires manager approval.",
+            citations=[object()],
+        ),
+    }
 
     assert middleware.before_agent(state, runtime=None) is None
     assert middleware.after_agent(state, runtime=None) is None
@@ -51,12 +59,16 @@ def test_logging_middleware_logs_before_and_after_agent(mocker):
 def test_logging_middleware_wrap_tool_call_logs_around_handler(mocker):
     middleware = AnswerAgentLoggingMiddleware()
     bound_logger = mocker.Mock()
-    mocker.patch(
+    bind = mocker.patch(
         "src.agents.answer_agent.middlewares.logger.bind",
         return_value=bound_logger,
     )
     request = mocker.Mock()
-    request.tool_call = {"name": "search_documents", "id": "tool-1", "args": {}}
+    request.tool_call = {
+        "name": "search_documents",
+        "id": "tool-1",
+        "args": {"query": "remote work approval policy"},
+    }
     expected = ToolMessage(content="ok", tool_call_id="tool-1")
     handler = mocker.Mock(return_value=expected)
 
@@ -64,5 +76,30 @@ def test_logging_middleware_wrap_tool_call_logs_around_handler(mocker):
 
     assert result is expected
     handler.assert_called_once_with(request)
+    bind.assert_called_once()
+    assert bind.call_args.kwargs["query_preview"] == "remote work approval policy"
     bound_logger.debug.assert_called_once()
     bound_logger.info.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_logging_middleware_logs_async_tool_failures(mocker):
+    middleware = AnswerAgentLoggingMiddleware()
+    bound_logger = mocker.Mock()
+    mocker.patch(
+        "src.agents.answer_agent.middlewares.logger.bind",
+        return_value=bound_logger,
+    )
+    request = mocker.Mock()
+    request.tool_call = {
+        "name": "search_documents",
+        "id": "tool-1",
+        "args": {"query": "benefits handbook"},
+    }
+    handler = mocker.AsyncMock(side_effect=RuntimeError("retrieval failed"))
+
+    with pytest.raises(RuntimeError, match="retrieval failed"):
+        await middleware.awrap_tool_call(request, handler)
+
+    bound_logger.debug.assert_called_once()
+    bound_logger.exception.assert_called_once()
