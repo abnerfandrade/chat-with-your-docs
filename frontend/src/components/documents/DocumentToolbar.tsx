@@ -21,7 +21,7 @@ export function DocumentToolbar({
         <p className="font-mono text-[0.72rem] uppercase tracking-[0.16em] text-slate-500">
           Library controls
         </p>
-        <p className="mt-2 text-sm leading-7 text-slate-400">
+        <p className="mt-2 text-sm leading-7 text-slate-400" aria-live="polite">
           {resultCount} document{resultCount === 1 ? "" : "s"} shown in the library.
         </p>
       </div>
@@ -34,7 +34,7 @@ export function DocumentToolbar({
             value={searchValue}
             onChange={(event) => onSearchChange(event.target.value)}
             placeholder="Search by file name..."
-            className="mt-2 w-full rounded-2xl border border-white/10 bg-[#0f1722] px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-[var(--accent)]"
+            className="mt-2 w-full rounded-2xl border border-white/10 bg-[#0f1722] px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-[var(--accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
           />
         </label>
 
@@ -47,7 +47,7 @@ export function DocumentToolbar({
                 event.target.value as "newest" | "oldest" | "filename" | "status",
               )
             }
-            className="mt-2 w-full rounded-2xl border border-white/10 bg-[#0f1722] px-4 py-3 text-sm text-white outline-none transition focus:border-[var(--accent)]"
+            className="mt-2 w-full rounded-2xl border border-white/10 bg-[#0f1722] px-4 py-3 text-sm text-white outline-none transition focus:border-[var(--accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
           >
             <option value="newest">Newest first</option>
             <option value="oldest">Oldest first</option>

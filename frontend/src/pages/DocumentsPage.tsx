@@ -45,7 +45,13 @@ export function DocumentsPage() {
   >("newest");
   const [validationError, setValidationError] = useState<string | null>(null);
   const [pendingUploads, setPendingUploads] = useState<string[]>([]);
-  const { data: documentsData, isLoading } = useDocuments();
+  const {
+    data: documentsData,
+    error: documentsError,
+    isError: isDocumentsError,
+    isLoading,
+    refetch,
+  } = useDocuments();
   const documents = Array.isArray(documentsData) ? documentsData : [];
   const queryClient = useQueryClient();
   const pushNotification = useNotificationStore((state) => state.pushNotification);
@@ -216,9 +222,14 @@ export function DocumentsPage() {
           documents={visibleDocuments}
           hasDocuments={documents.length > 0}
           isLoading={isLoading}
+          isError={isDocumentsError}
+          errorMessage={
+            documentsError instanceof Error ? documentsError.message : undefined
+          }
           hasActiveFilters={searchValue.trim().length > 0 || sortValue !== "newest"}
           onResetFilters={resetFilters}
           onFocusUpload={focusUploadInput}
+          onRetry={() => void refetch()}
         />
       </div>
     </section>

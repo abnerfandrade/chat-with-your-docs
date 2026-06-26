@@ -3,6 +3,7 @@ import { waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import App from "@/App";
 import { apiClient } from "@/api/axios";
+import { createAppQueryClient } from "@/lib/queryClient";
 import { useChatDraftStore } from "@/stores/useChatDraftStore";
 import type { MessageResponse } from "@/types/chat";
 import { renderWithProviders, screen } from "../../../tests/setup/test-utils";
@@ -167,8 +168,91 @@ describe("ChatPage", () => {
       screen.getByText(/the plan now prioritizes rollout work in july/i),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/review the transcript, follow the retrieved evidence/i),
+      screen.queryByText(/review the transcript, follow the retrieved evidence/i),
+    ).not.toBeInTheDocument();
+  });
+
+  it("shows a recoverable error state when the corpus readiness check fails", async () => {
+    const queryClient = createAppQueryClient();
+    queryClient.setDefaultOptions({
+      queries: {
+        retry: false,
+        refetchOnWindowFocus: false,
+      },
+    });
+    const getSpy = jest.spyOn(apiClient, "get").mockImplementation((url) => {
+      if (url === "/documents/") {
+        return Promise.reject(new Error("Corpus check failed."));
+      }
+
+      return Promise.resolve({
+        data: [],
+      } as Awaited<ReturnType<typeof apiClient.get>>);
+    });
+
+    renderWithProviders(<App />, { route: "/chat", queryClient });
+
+    expect(
+      await screen.findByRole("heading", {
+        name: /we couldn't confirm whether chat is ready/i,
+      }),
     ).toBeInTheDocument();
+
+    await userEvent.setup().click(
+      screen.getByRole("button", { name: /retry corpus check/i }),
+    );
+
+    expect(getSpy).toHaveBeenCalledWith("/documents/");
+  });
+
+  it("shows a recoverable error state when transcript loading fails", async () => {
+    const queryClient = createAppQueryClient();
+    queryClient.setDefaultOptions({
+      queries: {
+        retry: false,
+        refetchOnWindowFocus: false,
+      },
+    });
+    const getSpy = jest.spyOn(apiClient, "get").mockImplementation((url) => {
+      if (url === "/documents/") {
+        return Promise.resolve({
+          data: [
+            {
+              id: "doc-1",
+              filename: "handbook.pdf",
+              content_type: "application/pdf",
+              size_bytes: 2048,
+              status: "completed",
+              error_message: null,
+              created_at: "2026-06-25T12:00:00Z",
+              updated_at: "2026-06-25T12:05:00Z",
+            },
+          ],
+        } as Awaited<ReturnType<typeof apiClient.get>>);
+      }
+
+      if (url === "/chats/broken-chat/messages") {
+        return Promise.reject(new Error("Transcript unavailable."));
+      }
+
+      return Promise.resolve({
+        data: [],
+      } as Awaited<ReturnType<typeof apiClient.get>>);
+    });
+
+    renderWithProviders(<App />, { route: "/chat/broken-chat", queryClient });
+
+    expect(
+      await screen.findByRole("heading", {
+        name: /we couldn't load this conversation/i,
+      }),
+    ).toBeInTheDocument();
+
+    await userEvent.setup().click(
+      screen.getByRole("button", { name: /retry loading transcript/i }),
+    );
+
+    expect(getSpy).toHaveBeenCalledWith("/chats/broken-chat/messages");
   });
 
   it("streams the first reply, disables the composer, and renders citations", async () => {

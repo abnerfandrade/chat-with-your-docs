@@ -28,7 +28,7 @@ export function ChatComposer({
   }
 
   return (
-    <div className="border-t border-white/6 bg-[rgba(17,27,40,0.9)] px-4 py-4 backdrop-blur sm:px-6 lg:px-8">
+    <div className="border-t border-white/6 bg-[rgba(17,27,40,0.9)] px-4 py-4 backdrop-blur supports-[padding:max(0px)]:pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6 lg:px-8">
       <form
         onSubmit={handleSubmit}
         className="mx-auto flex w-full max-w-3xl flex-col gap-3"
@@ -38,6 +38,7 @@ export function ChatComposer({
         </label>
         <textarea
           id="chat-composer"
+          aria-describedby="chat-composer-help"
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
           disabled={!isInputEnabled || isStreaming}
@@ -55,10 +56,10 @@ export function ChatComposer({
               ? "Ask about the indexed documents..."
               : "Upload and process at least one document to enable chat input."
           }
-          className="w-full resize-none rounded-[24px] border border-white/10 bg-[#0f1722] px-4 py-4 text-sm leading-7 text-white outline-none transition placeholder:text-slate-500 disabled:cursor-not-allowed disabled:border-white/6 disabled:bg-black/10 disabled:text-slate-500 focus:border-[var(--accent)]"
+          className="w-full resize-none rounded-[24px] border border-white/10 bg-[#0f1722] px-4 py-4 text-sm leading-7 text-white outline-none transition placeholder:text-slate-500 disabled:cursor-not-allowed disabled:border-white/6 disabled:bg-black/10 disabled:text-slate-500 focus:border-[var(--accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
         />
         <div className="flex items-center justify-between gap-3">
-          <p className="text-sm text-slate-500">
+          <p id="chat-composer-help" className="text-sm text-slate-500">
             {!isInputEnabled
               ? "Chat input unlocks after at least one document finishes processing."
               : isStreaming
@@ -68,7 +69,7 @@ export function ChatComposer({
           <button
             type="submit"
             disabled={isSubmitDisabled}
-            className="rounded-2xl border border-white/10 bg-[#223246] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#29405b] disabled:cursor-not-allowed disabled:bg-white/5 disabled:text-slate-300 disabled:opacity-70"
+            className="rounded-2xl border border-white/10 bg-[#223246] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#29405b] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:bg-white/5 disabled:text-slate-300 disabled:opacity-70"
           >
             {isStreaming ? "Streaming..." : "Send"}
           </button>

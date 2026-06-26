@@ -15,6 +15,13 @@ export function UploadDropzone({
   onFilesSelected,
 }: UploadDropzoneProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const describedBy = [
+    "upload-dropzone-copy",
+    validationError ? "document-upload-error" : null,
+    isUploading ? "document-upload-progress" : null,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   function focusInput() {
     inputRef.current?.click();
@@ -37,9 +44,11 @@ export function UploadDropzone({
             Add files to the shared corpus
           </h2>
           <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-400">
+          <span id="upload-dropzone-copy">
             Supported file types: `.txt`, `.md`, and `.pdf`. Individual files
             can be up to {MAX_UPLOAD_SIZE_MB}MB and start processing immediately
             after upload.
+          </span>
           </p>
         </div>
 
@@ -47,7 +56,7 @@ export function UploadDropzone({
           <button
             type="button"
             onClick={focusInput}
-            className="rounded-2xl border border-white/10 bg-[#223246] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#29405b]"
+            className="rounded-2xl border border-white/10 bg-[#223246] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#29405b] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
           >
             Choose files
           </button>
@@ -62,6 +71,8 @@ export function UploadDropzone({
         id="document-upload-input"
         type="file"
         aria-label="Document upload input"
+        aria-describedby={describedBy}
+        aria-invalid={validationError ? "true" : "false"}
         accept=".txt,.md,.pdf,text/plain,text/markdown,application/pdf"
         multiple
         className="sr-only"
@@ -69,13 +80,22 @@ export function UploadDropzone({
       />
 
       {validationError ? (
-        <p className="mt-4 rounded-2xl border border-rose-400/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-100">
+        <p
+          id="document-upload-error"
+          role="alert"
+          className="mt-4 rounded-2xl border border-rose-400/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-100"
+        >
           {validationError}
         </p>
       ) : null}
 
       {isUploading ? (
-        <div className="mt-4 rounded-2xl border border-sky-400/20 bg-sky-500/10 px-4 py-3 text-sm text-sky-100">
+        <div
+          id="document-upload-progress"
+          role="status"
+          aria-live="polite"
+          className="mt-4 rounded-2xl border border-sky-400/20 bg-sky-500/10 px-4 py-3 text-sm text-sky-100"
+        >
           Uploading {pendingUploads.join(", ")}…
         </div>
       ) : null}

@@ -1,9 +1,13 @@
 import { Link } from "react-router-dom";
+import { StatePanel } from "@/components/layout/StatePanel";
 
 type ChatEmptyStateProps = {
   hasCompletedDocuments: boolean;
   isCheckingDocuments: boolean;
+  isDocumentsError?: boolean;
+  documentsErrorMessage?: string;
   onSelectPrompt: (prompt: string) => void;
+  onRetryDocuments?: () => void;
 };
 
 const starterPrompts = [
@@ -15,8 +19,49 @@ const starterPrompts = [
 export function ChatEmptyState({
   hasCompletedDocuments,
   isCheckingDocuments,
+  isDocumentsError = false,
+  documentsErrorMessage,
   onSelectPrompt,
+  onRetryDocuments,
 }: ChatEmptyStateProps) {
+  if (isDocumentsError) {
+    return (
+      <div className="mx-auto flex w-full max-w-3xl flex-1 items-center justify-center px-6 py-10 lg:px-8">
+        <div role="alert" className="w-full">
+          <StatePanel
+            eyebrow="Corpus status unavailable"
+            title="We couldn't confirm whether chat is ready"
+            description={
+              documentsErrorMessage ??
+              "The corpus readiness check failed. Retry to restore starter prompts and composer state."
+            }
+            tone="error"
+            align="left"
+            actions={
+              <>
+                {onRetryDocuments ? (
+                  <button
+                    type="button"
+                    onClick={onRetryDocuments}
+                    className="rounded-2xl border border-white/10 bg-[#223246] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#29405b] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
+                  >
+                    Retry corpus check
+                  </button>
+                ) : null}
+                <Link
+                  to="/documents"
+                  className="rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
+                >
+                  Open documents
+                </Link>
+              </>
+            }
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-1 items-center justify-center px-6 py-10 lg:px-8">
       <div className="w-full rounded-[28px] border border-white/6 bg-[var(--panel-soft)] p-6 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.03)] sm:p-8">
@@ -32,7 +77,11 @@ export function ChatEmptyState({
         </p>
 
         {isCheckingDocuments ? (
-          <div className="mt-8 rounded-[22px] border border-dashed border-white/10 bg-black/10 px-5 py-6 text-sm text-slate-400">
+          <div
+            className="mt-8 rounded-[22px] border border-dashed border-white/10 bg-black/10 px-5 py-6 text-sm text-slate-400"
+            role="status"
+            aria-live="polite"
+          >
             Checking whether the corpus is ready for chat…
           </div>
         ) : hasCompletedDocuments ? (
@@ -46,7 +95,7 @@ export function ChatEmptyState({
                   key={prompt}
                   type="button"
                   onClick={() => onSelectPrompt(prompt)}
-                  className="rounded-[22px] border border-white/10 bg-black/12 px-4 py-4 text-sm leading-6 text-slate-200 transition hover:border-white/16 hover:bg-white/6"
+                  className="rounded-[22px] border border-white/10 bg-black/12 px-4 py-4 text-sm leading-6 text-slate-200 transition hover:border-white/16 hover:bg-white/6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
                 >
                   {prompt}
                 </button>
@@ -65,7 +114,7 @@ export function ChatEmptyState({
             </p>
             <Link
               to="/documents"
-              className="mt-4 inline-flex rounded-2xl border border-white/10 bg-[#223246] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#29405b]"
+              className="mt-4 inline-flex rounded-2xl border border-white/10 bg-[#223246] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#29405b] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
             >
               Open documents
             </Link>

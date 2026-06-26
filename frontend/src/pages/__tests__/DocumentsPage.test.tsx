@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { act } from "@testing-library/react";
 import App from "@/App";
 import { apiClient } from "@/api/axios";
+import { createAppQueryClient } from "@/lib/queryClient";
 import { useNotificationStore } from "@/stores/useNotificationStore";
 import { renderWithProviders, screen } from "../../../tests/setup/test-utils";
 
@@ -187,5 +188,44 @@ describe("DocumentsPage", () => {
 
     expect(screen.queryByText(/employee-handbook\.pdf/i)).not.toBeInTheDocument();
     expect(screen.getByText(/support-playbook\.md/i)).toBeInTheDocument();
+  });
+
+  it("shows a recoverable error state when the library request fails", async () => {
+    const queryClient = createAppQueryClient();
+    queryClient.setDefaultOptions({
+      queries: {
+        retry: false,
+        refetchOnWindowFocus: false,
+      },
+    });
+    const getSpy = jest.spyOn(apiClient, "get").mockImplementation((url) => {
+      if (url === "/chats") {
+        return Promise.resolve({
+          data: [],
+        } as Awaited<ReturnType<typeof apiClient.get>>);
+      }
+
+      if (url === "/documents/") {
+        return Promise.reject(new Error("Library unavailable."));
+      }
+
+      return Promise.resolve({
+        data: [],
+      } as Awaited<ReturnType<typeof apiClient.get>>);
+    });
+
+    renderWithProviders(<App />, { route: "/documents", queryClient });
+
+    expect(
+      await screen.findByRole("heading", {
+        name: /we couldn't load the document library/i,
+      }),
+    ).toBeInTheDocument();
+
+    await userEvent.setup().click(
+      screen.getByRole("button", { name: /retry loading library/i }),
+    );
+
+    expect(getSpy).toHaveBeenCalledWith("/documents/");
   });
 });

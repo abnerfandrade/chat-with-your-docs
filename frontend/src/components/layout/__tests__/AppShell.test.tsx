@@ -2,6 +2,7 @@ import { jest } from "@jest/globals";
 import userEvent from "@testing-library/user-event";
 import App from "@/App";
 import { apiClient } from "@/api/axios";
+import { createAppQueryClient } from "@/lib/queryClient";
 import { useChatDraftStore } from "@/stores/useChatDraftStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { renderWithProviders, screen } from "../../../../tests/setup/test-utils";
@@ -121,12 +122,41 @@ describe("AppShell layout", () => {
     );
 
     expect(
-      screen.getByText(
-        /review the transcript, follow the retrieved evidence/i,
-      ),
+      screen.getByRole("heading", { level: 2, name: /^conversation$/i }),
     ).toBeInTheDocument();
     expect(
       await screen.findByText(/conversation history will appear here/i),
+    ).toBeInTheDocument();
+  });
+
+  it("shows a retry state when sidebar history fails to load", async () => {
+    const queryClient = createAppQueryClient();
+    queryClient.setDefaultOptions({
+      queries: {
+        retry: false,
+        refetchOnWindowFocus: false,
+      },
+    });
+    jest.restoreAllMocks();
+    jest.spyOn(apiClient, "get").mockImplementation((url) => {
+      if (url === "/chats") {
+        return Promise.reject(new Error("History unavailable."));
+      }
+
+      return Promise.resolve({
+        data: [],
+      } as Awaited<ReturnType<typeof apiClient.get>>);
+    });
+
+    renderWithProviders(<App />, { route: "/chat", queryClient });
+
+    expect(
+      await screen.findByRole("heading", {
+        name: /we couldn't load chat history/i,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /retry history/i }),
     ).toBeInTheDocument();
   });
 });

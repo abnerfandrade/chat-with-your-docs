@@ -47,7 +47,8 @@ export function NotificationCenter() {
             "pointer-events-auto rounded-[22px] border px-4 py-4 shadow-[0_18px_40px_rgba(0,0,0,0.28)] backdrop-blur",
             toneClassName[notification.tone],
           ].join(" ")}
-          aria-live="polite"
+          role={notification.tone === "error" ? "alert" : "status"}
+          aria-live={notification.tone === "error" ? "assertive" : "polite"}
         >
           <div className="flex items-start justify-between gap-4">
             <div>
@@ -63,7 +64,7 @@ export function NotificationCenter() {
             <button
               type="button"
               onClick={() => dismissNotification(notification.id)}
-              className="rounded-full border border-white/10 px-2 py-1 text-xs text-slate-200 transition hover:bg-white/10"
+              className="rounded-full border border-white/10 px-2 py-1 text-xs text-slate-200 transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
               aria-label={`Dismiss notification: ${notification.title}`}
             >
               Close

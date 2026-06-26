@@ -35,6 +35,7 @@ export function StatusBadge({ status }: StatusBadgeProps) {
 
   return (
     <span
+      aria-label={`Status: ${meta.label}`}
       className={[
         "inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em]",
         meta.className,

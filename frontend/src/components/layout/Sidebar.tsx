@@ -30,7 +30,7 @@ export function Sidebar({ onNavigate, onNewChat }: SidebarProps) {
       <button
         type="button"
         onClick={handleNewChat}
-        className="rounded-2xl border border-white/10 bg-[#223246] px-4 py-3 text-left text-sm font-semibold text-slate-50 transition hover:bg-[#29405b]"
+        className="rounded-2xl border border-white/10 bg-[#223246] px-4 py-3 text-left text-sm font-semibold text-slate-50 transition hover:bg-[#29405b] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
       >
         New chat
       </button>
@@ -48,8 +48,7 @@ export function Sidebar({ onNavigate, onNewChat }: SidebarProps) {
       </div>
 
       <footer className="border-t border-white/8 px-2 pt-4 text-sm leading-6 text-slate-500">
-        Frontend foundation is ready. Next steps will replace placeholder page
-        content with real chat and document flows.
+        Demo-ready workspace for grounded document conversations.
       </footer>
     </div>
   );

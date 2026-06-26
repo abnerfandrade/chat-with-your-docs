@@ -31,12 +31,21 @@ function getShellMeta(pathname: string) {
 
 export function AppShell() {
   const location = useLocation();
+  const isMobileSidebarOpen = useSidebarStore(
+    (state) => state.isMobileSidebarOpen,
+  );
   const openMobileSidebar = useSidebarStore((state) => state.openMobileSidebar);
   const clearDraft = useChatDraftStore((state) => state.clearDraft);
   const meta = getShellMeta(location.pathname);
 
   return (
     <div className="min-h-screen lg:grid lg:grid-cols-[288px_1fr]">
+      <a
+        href="#app-main-content"
+        className="sr-only absolute left-4 top-4 z-50 rounded-2xl bg-[#223246] px-4 py-2 text-sm font-semibold text-white focus:not-sr-only focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-[var(--accent)]"
+      >
+        Skip to main content
+      </a>
       <aside className="hidden h-screen border-r border-white/6 bg-[var(--sidebar)] shadow-[10px_0_30px_rgba(0,0,0,0.22)] lg:block">
         <Sidebar onNewChat={clearDraft} />
       </aside>
@@ -60,7 +69,9 @@ export function AppShell() {
               <button
                 type="button"
                 onClick={openMobileSidebar}
-                className="inline-flex items-center rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium text-slate-100 transition hover:bg-white/10 lg:hidden"
+                aria-expanded={isMobileSidebarOpen}
+                aria-controls="mobile-navigation-menu"
+                className="inline-flex items-center rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium text-slate-100 transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] lg:hidden"
               >
                 Menu
               </button>
@@ -71,7 +82,7 @@ export function AppShell() {
           </div>
         </header>
 
-        <main className="px-4 py-4 lg:px-7 lg:py-6">
+        <main id="app-main-content" className="px-4 py-4 lg:px-7 lg:py-6">
           <div className="mx-auto max-w-7xl">
             <div className="min-h-[calc(100vh-7.5rem)] overflow-hidden rounded-[28px] border border-white/6 bg-[var(--panel)] shadow-[0_24px_60px_rgba(0,0,0,0.28)]">
               <Outlet />

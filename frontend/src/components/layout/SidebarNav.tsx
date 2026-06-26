@@ -25,12 +25,12 @@ export function SidebarNav({ onNavigate }: SidebarNavProps) {
           key={item.to}
           to={item.to}
           onClick={onNavigate}
-          className={({ isActive }) =>
-            [
-              "rounded-2xl border px-3 py-3 text-left transition",
-              isActive
-                ? "border-white/10 bg-white/10 shadow-[inset_3px_0_0_rgba(124,199,192,0.55)]"
-                : "border-transparent hover:bg-white/6",
+                className={({ isActive }) =>
+                  [
+                    "rounded-2xl border px-3 py-3 text-left transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]",
+                    isActive
+                      ? "border-white/10 bg-white/10 shadow-[inset_3px_0_0_rgba(124,199,192,0.55)]"
+                      : "border-transparent hover:bg-white/6",
             ].join(" ")
           }
         >
