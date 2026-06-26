@@ -1,14 +1,18 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { Navigate, Route, Routes } from "react-router-dom";
-import { ScaffoldPage } from "./pages/ScaffoldPage";
+import { AppShell } from "./components/layout/AppShell";
+import { ChatPage } from "./pages/ChatPage";
+import { DocumentsPage } from "./pages/DocumentsPage";
 
 export default function App() {
-  useQueryClient();
-
   return (
     <Routes>
-      <Route path="/" element={<ScaffoldPage />} />
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="/" element={<Navigate to="/chat" replace />} />
+      <Route element={<AppShell />}>
+        <Route path="/chat" element={<ChatPage />} />
+        <Route path="/chat/:chatId" element={<ChatPage />} />
+        <Route path="/documents" element={<DocumentsPage />} />
+      </Route>
+      <Route path="*" element={<Navigate to="/chat" replace />} />
     </Routes>
   );
 }
