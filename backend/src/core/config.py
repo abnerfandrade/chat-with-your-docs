@@ -35,10 +35,7 @@ class Settings(BaseSettings):
     CHUNK_OVERLAP_TOKENS: int = Field(default=150)
     MAX_UPLOAD_SIZE_MB: int = Field(default=10)
     CORS_ALLOW_ORIGINS: list[str] = Field(
-        default_factory=lambda: [
-            "http://localhost:5173",
-            "http://127.0.0.1:5173",
-        ]
+        default_factory=lambda: ["*"]
     )
 
     ANSWER_AGENT_MAX_TOOL_CALLS: int = Field(default=3)
