@@ -1,0 +1,43 @@
+{
+  "name": "chat-with-your-docs-frontend",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand",
+    "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watch"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "5.101.1",
+    "axios": "1.18.1",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "react-router-dom": "7.18.0",
+    "zustand": "5.0.14"
+  },
+  "devDependencies": {
+    "@swc/core": "1.15.43",
+    "@swc/jest": "0.2.39",
+    "@tailwindcss/vite": "4.3.1",
+    "@testing-library/dom": "10.4.1",
+    "@testing-library/jest-dom": "6.9.1",
+    "@testing-library/react": "16.3.2",
+    "@testing-library/user-event": "14.6.1",
+    "@types/jest": "30.0.0",
+    "@types/node": "26.0.1",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.0.3",
+    "identity-obj-proxy": "3.0.0",
+    "jest": "30.4.2",
+    "jest-environment-jsdom": "30.4.1",
+    "msw": "2.14.6",
+    "tailwindcss": "4.3.1",
+    "ts-node": "10.9.2",
+    "typescript": "6.0.3",
+    "vite": "8.1.0",
+    "whatwg-fetch": "3.6.20"
+  }
+}
