@@ -1,7 +1,9 @@
 import type { MessageResponse } from "@/types/chat";
+import { CitationList } from "./CitationList";
 
 type MessageBubbleProps = {
   message: MessageResponse;
+  isStreaming?: boolean;
 };
 
 function formatTimestamp(timestamp: string) {
@@ -13,7 +15,10 @@ function formatTimestamp(timestamp: string) {
   }).format(new Date(timestamp));
 }
 
-export function MessageBubble({ message }: MessageBubbleProps) {
+export function MessageBubble({
+  message,
+  isStreaming = false,
+}: MessageBubbleProps) {
   const isUser = message.role === "user";
 
   return (
@@ -27,7 +32,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
     >
       <div className="flex items-center justify-between gap-4">
         <p className="font-mono text-[0.7rem] uppercase tracking-[0.16em] text-slate-400">
-          {isUser ? "You" : "Assistant"}
+          {isUser ? "You" : isStreaming ? "Assistant streaming" : "Assistant"}
         </p>
         <time
           dateTime={message.created_at}
@@ -39,6 +44,12 @@ export function MessageBubble({ message }: MessageBubbleProps) {
       <p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-100">
         {message.content}
       </p>
+      {!isUser && isStreaming ? (
+        <p className="mt-3 text-xs uppercase tracking-[0.16em] text-[var(--accent)]">
+          Streaming response…
+        </p>
+      ) : null}
+      {!isUser ? <CitationList citations={message.citations} /> : null}
     </article>
   );
 }

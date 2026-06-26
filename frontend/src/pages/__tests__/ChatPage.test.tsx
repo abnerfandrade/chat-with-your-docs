@@ -1,8 +1,48 @@
 import { jest } from "@jest/globals";
+import { waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import App from "@/App";
 import { apiClient } from "@/api/axios";
 import { useChatDraftStore } from "@/stores/useChatDraftStore";
+import type { MessageResponse } from "@/types/chat";
 import { renderWithProviders, screen } from "../../../tests/setup/test-utils";
+
+function createSseResponse(
+  chunks: Array<{ delay: number; value: string }>,
+  onChunk?: (value: string) => void,
+) {
+  const encoder = new TextEncoder();
+  const body = new ReadableStream<Uint8Array>({
+    start(controller) {
+      chunks.forEach(({ delay, value }, index) => {
+        const pushChunk = () => {
+          onChunk?.(value);
+          controller.enqueue(encoder.encode(value));
+          if (index === chunks.length - 1) {
+            controller.close();
+          }
+        };
+
+        if (delay === 0) {
+          pushChunk();
+          return;
+        }
+
+        setTimeout(pushChunk, delay);
+      });
+    },
+  });
+
+  return {
+    ok: true,
+    body,
+    headers: {
+      get: (name: string) =>
+        name.toLowerCase() === "content-type" ? "text/event-stream" : null,
+    },
+    status: 200,
+  } as Response;
+}
 
 describe("ChatPage", () => {
   beforeEach(() => {
@@ -127,7 +167,124 @@ describe("ChatPage", () => {
       screen.getByText(/the plan now prioritizes rollout work in july/i),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/historical messages appear in the transcript below/i),
+      screen.getByText(/review the transcript, follow the retrieved evidence/i),
     ).toBeInTheDocument();
+  });
+
+  it("streams the first reply, disables the composer, and renders citations", async () => {
+    const user = userEvent.setup();
+    const starterPrompt =
+      "Summarize the main themes across the uploaded documents.";
+    let generatedMessages: MessageResponse[] = [
+      {
+        id: "msg-user-1",
+        chat_id: "generated-chat",
+        role: "user",
+        content: starterPrompt,
+        citations: [],
+        created_at: "2026-06-25T12:00:00Z",
+      },
+    ];
+
+    const getSpy = jest.spyOn(apiClient, "get").mockImplementation((url) => {
+      if (url === "/documents/") {
+        return Promise.resolve({
+          data: [
+            {
+              id: "doc-1",
+              filename: "handbook.pdf",
+              content_type: "application/pdf",
+              size_bytes: 2048,
+              status: "completed",
+              error_message: null,
+              created_at: "2026-06-25T12:00:00Z",
+              updated_at: "2026-06-25T12:05:00Z",
+            },
+          ],
+        } as Awaited<ReturnType<typeof apiClient.get>>);
+      }
+
+      if (url === "/chats/generated-chat/messages") {
+        return Promise.resolve({
+          data: generatedMessages,
+        } as Awaited<ReturnType<typeof apiClient.get>>);
+      }
+
+      return Promise.resolve({
+        data: [],
+      } as Awaited<ReturnType<typeof apiClient.get>>);
+    });
+
+    jest.spyOn(global, "fetch").mockResolvedValue(
+      createSseResponse(
+        [
+          {
+            delay: 0,
+            value:
+              'event: chat_id\ndata: {"chat_id":"generated-chat"}\n\n' +
+              'event: content\ndata: {"text":"The handbook says "}\n\n',
+          },
+          {
+            delay: 300,
+            value:
+              'event: content\ndata: {"text":"rollouts start in July."}\n\n' +
+              'event: citations\ndata: {"citations":[{"document_id":"doc-1","source":"handbook.pdf","chunk_id":"chunk-1","page":3,"snippet":"Rollouts begin in July."}]}\n\n' +
+              "event: done\ndata: [DONE]\n\n",
+          },
+        ],
+        (chunk) => {
+          if (chunk.includes("event: done")) {
+            generatedMessages = [
+              ...generatedMessages,
+              {
+                id: "msg-assistant-1",
+                chat_id: "generated-chat",
+                role: "assistant",
+                content: "The handbook says rollouts start in July.",
+                citations: [
+                  {
+                    document_id: "doc-1",
+                    source: "handbook.pdf",
+                    chunk_id: "chunk-1",
+                    page: 3,
+                    snippet: "Rollouts begin in July.",
+                  },
+                ],
+                created_at: "2026-06-25T12:01:00Z",
+              },
+            ];
+          }
+        },
+      ),
+    );
+
+    renderWithProviders(<App />, { route: "/chat" });
+
+    await user.click(
+      await screen.findByRole("button", {
+        name: /summarize the main themes across the uploaded documents/i,
+      }),
+    );
+
+    expect(screen.getByLabelText(/message composer/i)).toHaveValue(starterPrompt);
+
+    const sendButton = screen.getByRole("button", { name: /send/i });
+    await waitFor(() => expect(sendButton).toBeEnabled());
+    await user.click(sendButton);
+
+    await waitFor(() =>
+      expect(screen.getByLabelText(/message composer/i)).toBeDisabled(),
+    );
+    expect(
+      await screen.findByText(/the handbook says /i),
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByRole("heading", { name: /conversation/i }),
+    ).toBeInTheDocument();
+    expect(getSpy).toHaveBeenCalledWith("/chats/generated-chat/messages");
+    expect(
+      await screen.findByText(/rollouts begin in july/i),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/handbook\.pdf/i)).toBeInTheDocument();
   });
 });

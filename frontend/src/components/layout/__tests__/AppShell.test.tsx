@@ -122,7 +122,7 @@ describe("AppShell layout", () => {
 
     expect(
       screen.getByText(
-        /historical messages appear in the transcript below/i,
+        /review the transcript, follow the retrieved evidence/i,
       ),
     ).toBeInTheDocument();
     expect(
