@@ -1,8 +1,18 @@
 import { http, HttpResponse } from "msw";
-import { scaffoldFixture } from "./fixtures";
+import {
+  chatMessagesFixture,
+  documentsFixture,
+  scaffoldFixture,
+} from "./fixtures";
 
 export const handlers = [
   http.get("http://localhost:8000/health", () =>
     HttpResponse.json(scaffoldFixture),
+  ),
+  http.get("http://localhost:8000/documents/", () =>
+    HttpResponse.json(documentsFixture),
+  ),
+  http.get("http://localhost:8000/chats/:chatId/messages", () =>
+    HttpResponse.json(chatMessagesFixture),
   ),
 ];

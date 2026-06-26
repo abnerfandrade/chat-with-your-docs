@@ -61,7 +61,7 @@ describe("AppShell layout", () => {
 
     expect(useChatDraftStore.getState().draft).toBe("");
     expect(
-      screen.getByRole("heading", { name: /start a new conversation/i }),
+      screen.getByText(/open a fresh thread grounded in your uploaded corpus/i),
     ).toBeInTheDocument();
   });
 });

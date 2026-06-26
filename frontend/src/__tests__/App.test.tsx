@@ -6,9 +6,7 @@ describe("App routing", () => {
     renderWithProviders(<App />);
 
     expect(
-      screen.getByRole("heading", {
-        name: /start a new conversation/i,
-      }),
+      screen.getByText(/open a fresh thread grounded in your uploaded corpus/i),
     ).toBeInTheDocument();
   });
 
@@ -16,19 +14,19 @@ describe("App routing", () => {
     renderWithProviders(<App />, { route: "/missing-route" });
 
     expect(
-      screen.getByRole("heading", { name: /start a new conversation/i }),
+      screen.getByText(/open a fresh thread grounded in your uploaded corpus/i),
     ).toBeInTheDocument();
   });
 
-  it("renders the selected chat route", () => {
+  it("renders the selected chat route", async () => {
     renderWithProviders(<App />, { route: "/chat/quarterly-plan" });
 
     expect(
-      screen.getByText(/chat id: quarterly-plan/i),
+      screen.getByRole("heading", { name: /conversation/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(
-        /this route is ready for historical messages and streaming state in the next step/i,
+      await screen.findByText(
+        /conversation history will appear here/i,
       ),
     ).toBeInTheDocument();
   });
