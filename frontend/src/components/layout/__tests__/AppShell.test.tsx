@@ -1,5 +1,7 @@
+import { jest } from "@jest/globals";
 import userEvent from "@testing-library/user-event";
 import App from "@/App";
+import { apiClient } from "@/api/axios";
 import { useChatDraftStore } from "@/stores/useChatDraftStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { renderWithProviders, screen } from "../../../../tests/setup/test-utils";
@@ -8,9 +10,46 @@ describe("AppShell layout", () => {
   beforeEach(() => {
     useChatDraftStore.setState({ draft: "" });
     useSidebarStore.setState({ isMobileSidebarOpen: false });
+    jest.spyOn(apiClient, "get").mockImplementation((url) => {
+      if (url === "/chats") {
+        return Promise.resolve({
+          data: [
+            {
+              id: "onboarding-brief",
+              title: "Onboarding brief",
+              created_at: "2026-06-24T10:00:00Z",
+            },
+            {
+              id: "quarterly-plan",
+              title: "Quarterly plan",
+              created_at: "2026-06-23T10:00:00Z",
+            },
+            {
+              id: "support-playbook",
+              title: "Support playbook",
+              created_at: "2026-06-22T10:00:00Z",
+            },
+          ],
+        } as Awaited<ReturnType<typeof apiClient.get>>);
+      }
+
+      if (url === "/documents/" || String(url).startsWith("/chats/")) {
+        return Promise.resolve({
+          data: [],
+        } as Awaited<ReturnType<typeof apiClient.get>>);
+      }
+
+      return Promise.resolve({
+        data: [],
+      } as Awaited<ReturnType<typeof apiClient.get>>);
+    });
   });
 
-  it("renders navigation and recent chats in the sidebar", () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("renders navigation and recent chats in the sidebar", async () => {
     renderWithProviders(<App />, { route: "/chat" });
 
     expect(
@@ -22,6 +61,12 @@ describe("AppShell layout", () => {
     expect(screen.getByRole("link", { name: /chats/i })).toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: /documents/i }),
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText(/onboarding brief/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/quarterly plan/i),
     ).toBeInTheDocument();
   });
 
@@ -62,6 +107,26 @@ describe("AppShell layout", () => {
     expect(useChatDraftStore.getState().draft).toBe("");
     expect(
       screen.getByText(/open a fresh thread grounded in your uploaded corpus/i),
+    ).toBeInTheDocument();
+  });
+
+  it("routes into an existing chat from sidebar history", async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<App />, { route: "/documents" });
+
+    await user.click(
+      await screen.findByRole("link", {
+        name: /quarterly plan/i,
+      }),
+    );
+
+    expect(
+      screen.getByText(
+        /historical messages appear in the transcript below/i,
+      ),
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText(/conversation history will appear here/i),
     ).toBeInTheDocument();
   });
 });
