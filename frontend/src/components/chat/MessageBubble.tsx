@@ -24,28 +24,28 @@ export function MessageBubble({
   return (
     <article
       className={[
-        "max-w-3xl rounded-[24px] border px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)] sm:px-5",
+        "max-w-[780px] rounded-[18px] border px-[18px] py-4 leading-[1.65] shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]",
         isUser
-          ? "ml-auto border-white/8 bg-[#263445]"
-          : "mr-auto border-white/6 bg-[#1a2432]",
+          ? "ml-auto border-[var(--line)] bg-[var(--user)]"
+          : "mr-auto border-[var(--line)] bg-[var(--assistant)]",
       ].join(" ")}
     >
       <div className="flex items-center justify-between gap-4">
-        <p className="font-mono text-[0.7rem] uppercase tracking-[0.16em] text-slate-400">
+        <p className="font-mono text-[0.74rem] uppercase tracking-[0.08em] text-[var(--muted)]">
           {isUser ? "You" : isStreaming ? "Assistant streaming" : "Assistant"}
         </p>
         <time
           dateTime={message.created_at}
-          className="text-xs text-slate-500"
+          className="text-[0.74rem] text-slate-500"
         >
           {formatTimestamp(message.created_at)}
         </time>
       </div>
-      <p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-100">
+      <p className="mt-3 whitespace-pre-wrap text-[0.94rem] text-slate-100">
         {message.content}
       </p>
       {!isUser && isStreaming ? (
-        <p className="mt-3 text-xs uppercase tracking-[0.16em] text-[var(--accent)]">
+        <p className="mt-3 text-[0.74rem] uppercase tracking-[0.12em] text-[var(--accent)]">
           Streaming response…
         </p>
       ) : null}

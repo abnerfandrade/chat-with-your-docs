@@ -30,20 +30,20 @@ export function UploadDropzone({
   return (
     <section
       aria-labelledby="upload-dropzone-heading"
-      className="rounded-[28px] border border-dashed border-white/10 bg-[var(--panel-soft)] px-5 py-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)] sm:px-6"
+      className="rounded-[18px] border border-dashed border-[var(--line-strong)] bg-[var(--panel-soft)] px-5 py-5"
     >
-      <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+      <div className="flex flex-col gap-[18px] lg:flex-row lg:items-center lg:justify-between">
         <div>
           <p
             id="upload-dropzone-heading"
-            className="font-mono text-[0.72rem] uppercase tracking-[0.16em] text-slate-500"
+            className="font-mono text-[0.72rem] uppercase tracking-[0.12em] text-[#8ba2c6]"
           >
             Upload source documents
           </p>
-          <h2 className="mt-3 text-xl font-semibold text-white">
+          <h2 className="mt-3 text-[0.94rem] font-semibold text-white">
             Add files to the shared corpus
           </h2>
-          <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-400">
+          <p className="mt-[6px] max-w-[42rem] text-[0.84rem] leading-7 text-[var(--muted)]">
           <span id="upload-dropzone-copy">
             Supported file types: `.txt`, `.md`, and `.pdf`. Individual files
             can be up to {MAX_UPLOAD_SIZE_MB}MB and start processing immediately
@@ -56,11 +56,11 @@ export function UploadDropzone({
           <button
             type="button"
             onClick={focusInput}
-            className="rounded-2xl border border-white/10 bg-[#223246] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#29405b] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
+            className="rounded-[12px] border-0 bg-[var(--accent)] px-[14px] py-[10px] text-[0.84rem] font-semibold text-[#10202a] transition hover:brightness-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
           >
             Choose files
           </button>
-          <span className="rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-300">
+          <span className="rounded-[12px] border border-[var(--line-strong)] bg-[#1a2432] px-[14px] py-[10px] text-[0.84rem] text-[var(--text)]">
             Multiple files supported
           </span>
         </div>
@@ -83,7 +83,7 @@ export function UploadDropzone({
         <p
           id="document-upload-error"
           role="alert"
-          className="mt-4 rounded-2xl border border-rose-400/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-100"
+          className="mt-4 rounded-[14px] border border-rose-400/20 bg-rose-500/10 px-4 py-3 text-[0.84rem] text-rose-100"
         >
           {validationError}
         </p>
@@ -94,7 +94,7 @@ export function UploadDropzone({
           id="document-upload-progress"
           role="status"
           aria-live="polite"
-          className="mt-4 rounded-2xl border border-sky-400/20 bg-sky-500/10 px-4 py-3 text-sm text-sky-100"
+          className="mt-4 rounded-[14px] border border-sky-400/20 bg-sky-500/10 px-4 py-3 text-[0.84rem] text-sky-100"
         >
           Uploading {pendingUploads.join(", ")}…
         </div>

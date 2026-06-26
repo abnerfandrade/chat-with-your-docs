@@ -180,25 +180,25 @@ export function DocumentsPage() {
   }
 
   return (
-    <section className="grid min-h-[calc(100vh-7.5rem)] grid-rows-[auto_auto_auto_1fr]">
-      <header className="border-b border-white/6 px-6 py-5 lg:px-8">
-        <p className="font-mono text-[0.72rem] uppercase tracking-[0.18em] text-slate-500">
+    <section className="grid h-full min-h-0 grid-rows-[auto_auto_auto_1fr]">
+      <header className="border-b border-[var(--line)] px-[22px] py-[22px]">
+        <p className="font-mono text-[0.72rem] uppercase tracking-[0.12em] text-[#8ba2c6]">
           Documents library
         </p>
-        <h2 className="mt-2 text-2xl font-semibold text-white">
+        <h2 className="mt-3 text-[1.55rem] font-semibold tracking-[-0.03em] text-white">
           Build and monitor the shared corpus
         </h2>
-        <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-400">
+        <p className="mt-[10px] max-w-[760px] text-[0.92rem] leading-7 text-[var(--muted)]">
           Upload source files, track ingestion progress, and keep the retrieval
           library ready for grounded chats.
         </p>
       </header>
 
-      <div className="px-6 py-5 lg:px-8">
+      <div className="px-[22px] py-[18px]">
         <DocumentStats documents={documents} />
       </div>
 
-      <div className="px-6 pb-5 lg:px-8">
+      <div className="px-[22px] pb-[18px]">
         <UploadDropzone
           isUploading={uploadMutation.isPending}
           pendingUploads={pendingUploads}
@@ -207,7 +207,7 @@ export function DocumentsPage() {
         />
       </div>
 
-      <div className="px-6 pb-5 lg:px-8">
+      <div>
         <DocumentToolbar
           resultCount={visibleDocuments.length}
           searchValue={searchValue}
@@ -217,7 +217,7 @@ export function DocumentsPage() {
         />
       </div>
 
-      <div className="px-6 pb-8 lg:px-8">
+      <div className="min-h-0">
         <DocumentLibrary
           documents={visibleDocuments}
           hasDocuments={documents.length > 0}

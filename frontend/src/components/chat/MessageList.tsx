@@ -50,22 +50,22 @@ export function MessageList({
   if (isLoading) {
     return (
       <div
-        className="mx-auto flex w-full max-w-3xl flex-col gap-4 px-6 py-8 lg:px-8"
+        className="mx-auto flex w-full max-w-[780px] flex-col gap-[14px] px-6 py-[22px]"
         role="status"
         aria-live="polite"
         aria-label="Loading transcript"
       >
         <span className="sr-only">Loading transcript</span>
-        <div className="h-28 rounded-[24px] border border-white/6 bg-[#1a2432] animate-pulse" />
-        <div className="ml-auto h-24 w-[85%] rounded-[24px] border border-white/6 bg-[#263445] animate-pulse sm:w-[72%]" />
-        <div className="h-32 rounded-[24px] border border-white/6 bg-[#1a2432] animate-pulse" />
+        <div className="h-28 rounded-[18px] border border-[var(--line)] bg-[var(--assistant)] animate-pulse" />
+        <div className="ml-auto h-24 w-[85%] rounded-[18px] border border-[var(--line)] bg-[var(--user)] animate-pulse sm:w-[72%]" />
+        <div className="h-32 rounded-[18px] border border-[var(--line)] bg-[var(--assistant)] animate-pulse" />
       </div>
     );
   }
 
   if (isError) {
     return (
-      <div className="mx-auto flex w-full max-w-3xl flex-1 items-center justify-center px-6 py-10 lg:px-8">
+      <div className="mx-auto flex w-full max-w-[780px] flex-1 items-center justify-center px-6 py-10">
         <div role="alert" className="w-full">
           <StatePanel
             eyebrow="Transcript unavailable"
@@ -81,7 +81,7 @@ export function MessageList({
                 <button
                   type="button"
                   onClick={onRetry}
-                  className="rounded-2xl border border-white/10 bg-[#223246] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#29405b] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
+                  className="rounded-[12px] border-0 bg-[var(--accent)] px-4 py-[10px] text-[0.84rem] font-semibold text-[#10202a] transition hover:brightness-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
                 >
                   Retry loading transcript
                 </button>
@@ -95,7 +95,7 @@ export function MessageList({
 
   if (messages.length === 0 && !streamingMessage) {
     return (
-      <div className="mx-auto flex w-full max-w-3xl flex-1 items-center justify-center px-6 py-10 lg:px-8">
+      <div className="mx-auto flex w-full max-w-[780px] flex-1 items-center justify-center px-6 py-10">
         <StatePanel
           eyebrow="Empty transcript"
           title="Conversation history will appear here"
@@ -112,7 +112,7 @@ export function MessageList({
       className="h-full overflow-y-auto"
       aria-busy={isLoading || Boolean(streamingMessage)}
     >
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-4 px-6 py-8 lg:px-8">
+      <div className="mx-auto flex w-full max-w-[780px] flex-col gap-[14px] px-6 py-[22px]">
         {messages.map((message) => (
           <MessageBubble key={message.id} message={message} />
         ))}

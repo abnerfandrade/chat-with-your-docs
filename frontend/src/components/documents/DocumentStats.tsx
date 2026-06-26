@@ -46,15 +46,15 @@ export function DocumentStats({ documents }: DocumentStatsProps) {
       {statMeta.map((stat) => (
         <article
           key={stat.key}
-          className="rounded-[24px] border border-white/6 bg-[var(--panel-soft)] px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]"
+          className="rounded-[16px] border border-[var(--line)] bg-[var(--panel-soft)] px-4 py-[14px]"
         >
-          <p className="font-mono text-[0.72rem] uppercase tracking-[0.16em] text-slate-500">
+          <p className="font-mono text-[0.72rem] uppercase tracking-[0.12em] text-[#8ba2c6]">
             {stat.label}
           </p>
-          <p className="mt-3 text-3xl font-semibold text-white">
+          <p className="mt-3 text-[1.8rem] font-semibold text-white">
             {stat.getValue(documents)}
           </p>
-          <p className="mt-2 text-sm leading-6 text-slate-400">
+          <p className="mt-2 text-[0.82rem] leading-6 text-[var(--muted)]">
             {stat.description}
           </p>
         </article>

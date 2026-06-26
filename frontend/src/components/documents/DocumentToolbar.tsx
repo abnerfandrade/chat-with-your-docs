@@ -16,30 +16,30 @@ export function DocumentToolbar({
   onSortChange,
 }: DocumentToolbarProps) {
   return (
-    <section className="flex flex-col gap-4 rounded-[24px] border border-white/6 bg-[var(--panel-soft)] px-4 py-4 lg:flex-row lg:items-end lg:justify-between">
+    <section className="flex flex-col gap-4 border-y border-[var(--line)] px-[22px] py-[18px] lg:flex-row lg:items-center lg:justify-between">
       <div>
-        <p className="font-mono text-[0.72rem] uppercase tracking-[0.16em] text-slate-500">
+        <p className="font-mono text-[0.72rem] uppercase tracking-[0.12em] text-[#8ba2c6]">
           Library controls
         </p>
-        <p className="mt-2 text-sm leading-7 text-slate-400" aria-live="polite">
+        <p className="mt-[6px] text-[0.82rem] leading-6 text-[var(--muted)]" aria-live="polite">
           {resultCount} document{resultCount === 1 ? "" : "s"} shown in the library.
         </p>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_13rem]">
+      <div className="grid gap-3 sm:grid-cols-[minmax(240px,1fr)_13rem]">
         <label className="text-sm text-slate-200">
-          Search
+          <span className="sr-only">Search</span>
           <input
             type="search"
             value={searchValue}
             onChange={(event) => onSearchChange(event.target.value)}
             placeholder="Search by file name..."
-            className="mt-2 w-full rounded-2xl border border-white/10 bg-[#0f1722] px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-[var(--accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
+            className="w-full rounded-[14px] border border-[var(--line)] bg-[#1a2432] px-3 py-[10px] text-[0.84rem] text-[var(--muted)] outline-none transition placeholder:text-slate-500 focus:border-[var(--accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
           />
         </label>
 
         <label className="text-sm text-slate-200">
-          Sort by
+          <span className="sr-only">Sort by</span>
           <select
             value={sortValue}
             onChange={(event) =>
@@ -47,7 +47,7 @@ export function DocumentToolbar({
                 event.target.value as "newest" | "oldest" | "filename" | "status",
               )
             }
-            className="mt-2 w-full rounded-2xl border border-white/10 bg-[#0f1722] px-4 py-3 text-sm text-white outline-none transition focus:border-[var(--accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
+            className="w-full rounded-full border border-[var(--line)] bg-[var(--panel-soft)] px-3 py-[9px] text-[0.78rem] font-semibold text-[var(--muted)] outline-none transition focus:border-[var(--accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
           >
             <option value="newest">Newest first</option>
             <option value="oldest">Oldest first</option>

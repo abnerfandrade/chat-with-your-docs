@@ -19,21 +19,21 @@ export function SidebarChatList({ onNavigate }: SidebarChatListProps) {
 
   return (
     <section aria-labelledby="recent-chats-heading" className="min-h-0">
-      <div className="px-2">
+      <div className="px-[10px]">
         <h2
           id="recent-chats-heading"
-          className="font-mono text-[0.72rem] uppercase tracking-[0.18em] text-slate-500"
+          className="font-mono text-[0.72rem] uppercase tracking-[0.12em] text-[rgba(243,243,241,0.46)]"
         >
           Recent chats
         </h2>
       </div>
-      <div className="mt-3 flex flex-col gap-2">
+      <div className="mt-3 flex flex-col gap-[6px]">
         {isLoading ? (
           <div role="status" aria-live="polite" aria-label="Loading recent chats">
             <span className="sr-only">Loading recent chats</span>
-            <div className="h-16 rounded-2xl border border-white/6 bg-white/5 animate-pulse" />
-            <div className="h-16 rounded-2xl border border-white/6 bg-white/5 animate-pulse" />
-            <div className="h-16 rounded-2xl border border-white/6 bg-white/5 animate-pulse" />
+            <div className="h-16 rounded-[12px] border border-white/6 bg-white/5 animate-pulse" />
+            <div className="mt-[6px] h-16 rounded-[12px] border border-white/6 bg-white/5 animate-pulse" />
+            <div className="mt-[6px] h-16 rounded-[12px] border border-white/6 bg-white/5 animate-pulse" />
           </div>
         ) : null}
 
@@ -53,7 +53,7 @@ export function SidebarChatList({ onNavigate }: SidebarChatListProps) {
                 <button
                   type="button"
                   onClick={() => void refetch()}
-                  className="rounded-2xl border border-white/10 bg-[#223246] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#29405b] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
+                  className="rounded-[12px] border-0 bg-[var(--accent)] px-4 py-[10px] text-[0.84rem] font-semibold text-[#10202a] transition hover:brightness-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
                 >
                   Retry history
                 </button>
@@ -63,7 +63,7 @@ export function SidebarChatList({ onNavigate }: SidebarChatListProps) {
         ) : null}
 
         {!isLoading && !isError && chats.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-white/8 bg-black/12 px-4 py-4 text-sm leading-6 text-slate-400">
+          <div className="rounded-[12px] border border-dashed border-white/8 bg-black/12 px-4 py-4 text-[0.8rem] leading-6 text-[rgba(243,243,241,0.52)]">
             Previous conversations will appear here once a chat has been created.
           </div>
         ) : null}
@@ -76,17 +76,17 @@ export function SidebarChatList({ onNavigate }: SidebarChatListProps) {
                 onClick={onNavigate}
                 className={({ isActive }) =>
                   [
-                    "rounded-2xl border px-3 py-3 text-left transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]",
+                    "rounded-[12px] border px-3 py-3 text-left transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]",
                     isActive
                       ? "border-white/10 bg-white/10 shadow-[inset_3px_0_0_rgba(124,199,192,0.55)]"
                       : "border-transparent hover:bg-white/6",
                   ].join(" ")
                 }
               >
-                <strong className="block truncate text-sm font-semibold text-slate-100">
+                <strong className="block truncate text-[0.9rem] font-semibold text-slate-100">
                   {chat.title}
                 </strong>
-                <span className="mt-1.5 block text-sm leading-6 text-slate-400">
+                <span className="mt-[5px] block text-[0.78rem] leading-7 text-[rgba(243,243,241,0.52)]">
                   Created {formatChatTimestamp(chat.created_at)}
                 </span>
               </NavLink>

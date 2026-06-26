@@ -10,13 +10,15 @@ export function ChatHeader({
   eyebrow = "Conversation",
 }: ChatHeaderProps) {
   return (
-    <header className="border-b border-white/6 px-6 py-5 lg:px-8">
-      <p className="font-mono text-[0.72rem] uppercase tracking-[0.18em] text-slate-500">
+    <header className="border-b border-[var(--line)] px-[22px] py-[22px]">
+      <p className="font-mono text-[0.72rem] uppercase tracking-[0.12em] text-[#7f95b8]">
         {eyebrow}
       </p>
-      <h2 className="mt-2 text-2xl font-semibold text-white">{title}</h2>
+      <h2 className="mt-3 text-[1.55rem] font-semibold tracking-[-0.03em] text-white">
+        {title}
+      </h2>
       {description ? (
-        <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-400">
+        <p className="mt-[10px] max-w-[760px] text-[0.92rem] leading-7 text-[var(--muted)]">
           {description}
         </p>
       ) : null}

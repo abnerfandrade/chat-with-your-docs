@@ -70,7 +70,9 @@ describe("ChatPage", () => {
     renderWithProviders(<App />, { route: "/chat" });
 
     expect(
-      await screen.findByText(/upload documents before starting the first chat/i),
+      await screen.findByText(
+        /upload documents before starting the first chat/i,
+      ),
     ).toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: /open documents/i }),
@@ -83,17 +85,17 @@ describe("ChatPage", () => {
       if (url === "/documents/") {
         return Promise.resolve({
           data: [
-          {
-            id: "doc-1",
-            filename: "handbook.pdf",
-            content_type: "application/pdf",
-            size_bytes: 2048,
-            status: "completed",
-            error_message: null,
-            created_at: "2026-06-25T12:00:00Z",
-            updated_at: "2026-06-25T12:05:00Z",
-          },
-        ],
+            {
+              id: "doc-1",
+              filename: "handbook.pdf",
+              content_type: "application/pdf",
+              size_bytes: 2048,
+              status: "completed",
+              error_message: null,
+              created_at: "2026-06-25T12:00:00Z",
+              updated_at: "2026-06-25T12:05:00Z",
+            },
+          ],
         } as Awaited<ReturnType<typeof apiClient.get>>);
       }
 
@@ -117,40 +119,40 @@ describe("ChatPage", () => {
       if (url === "/documents/") {
         return Promise.resolve({
           data: [
-          {
-            id: "doc-1",
-            filename: "handbook.pdf",
-            content_type: "application/pdf",
-            size_bytes: 2048,
-            status: "completed",
-            error_message: null,
-            created_at: "2026-06-25T12:00:00Z",
-            updated_at: "2026-06-25T12:05:00Z",
-          },
-        ],
+            {
+              id: "doc-1",
+              filename: "handbook.pdf",
+              content_type: "application/pdf",
+              size_bytes: 2048,
+              status: "completed",
+              error_message: null,
+              created_at: "2026-06-25T12:00:00Z",
+              updated_at: "2026-06-25T12:05:00Z",
+            },
+          ],
         } as Awaited<ReturnType<typeof apiClient.get>>);
       }
 
       if (url === "/chats/quarterly-plan/messages") {
         return Promise.resolve({
           data: [
-          {
-            id: "msg-1",
-            chat_id: "quarterly-plan",
-            role: "user",
-            content: "What changed in the plan?",
-            citations: [],
-            created_at: "2026-06-25T12:00:00Z",
-          },
-          {
-            id: "msg-2",
-            chat_id: "quarterly-plan",
-            role: "assistant",
-            content: "The plan now prioritizes rollout work in July.",
-            citations: [],
-            created_at: "2026-06-25T12:01:00Z",
-          },
-        ],
+            {
+              id: "msg-1",
+              chat_id: "quarterly-plan",
+              role: "user",
+              content: "What changed in the plan?",
+              citations: [],
+              created_at: "2026-06-25T12:00:00Z",
+            },
+            {
+              id: "msg-2",
+              chat_id: "quarterly-plan",
+              role: "assistant",
+              content: "The plan now prioritizes rollout work in July.",
+              citations: [],
+              created_at: "2026-06-25T12:01:00Z",
+            },
+          ],
         } as Awaited<ReturnType<typeof apiClient.get>>);
       }
 
@@ -168,7 +170,9 @@ describe("ChatPage", () => {
       screen.getByText(/the plan now prioritizes rollout work in july/i),
     ).toBeInTheDocument();
     expect(
-      screen.queryByText(/review the transcript, follow the retrieved evidence/i),
+      screen.queryByText(
+        /review the transcript, follow the retrieved evidence/i,
+      ),
     ).not.toBeInTheDocument();
   });
 
@@ -198,9 +202,9 @@ describe("ChatPage", () => {
       }),
     ).toBeInTheDocument();
 
-    await userEvent.setup().click(
-      screen.getByRole("button", { name: /retry corpus check/i }),
-    );
+    await userEvent
+      .setup()
+      .click(screen.getByRole("button", { name: /retry corpus check/i }));
 
     expect(getSpy).toHaveBeenCalledWith("/documents/");
   });
@@ -248,9 +252,9 @@ describe("ChatPage", () => {
       }),
     ).toBeInTheDocument();
 
-    await userEvent.setup().click(
-      screen.getByRole("button", { name: /retry loading transcript/i }),
-    );
+    await userEvent
+      .setup()
+      .click(screen.getByRole("button", { name: /retry loading transcript/i }));
 
     expect(getSpy).toHaveBeenCalledWith("/chats/broken-chat/messages");
   });
@@ -350,7 +354,9 @@ describe("ChatPage", () => {
       }),
     );
 
-    expect(screen.getByLabelText(/message composer/i)).toHaveValue(starterPrompt);
+    expect(screen.getByLabelText(/message composer/i)).toHaveValue(
+      starterPrompt,
+    );
 
     const sendButton = screen.getByRole("button", { name: /send/i });
     await waitFor(() => expect(sendButton).toBeEnabled());
@@ -359,16 +365,9 @@ describe("ChatPage", () => {
     await waitFor(() =>
       expect(screen.getByLabelText(/message composer/i)).toBeDisabled(),
     );
-    expect(
-      await screen.findByText(/the handbook says /i),
-    ).toBeInTheDocument();
-    expect(
-      await screen.findByRole("heading", { name: /conversation/i }),
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/the handbook says /i)).toBeInTheDocument();
     expect(getSpy).toHaveBeenCalledWith("/chats/generated-chat/messages");
-    expect(
-      await screen.findByText(/rollouts begin in july/i),
-    ).toBeInTheDocument();
     expect(screen.getByText(/handbook\.pdf/i)).toBeInTheDocument();
+    expect(screen.getByText(/p\.3/i)).toBeInTheDocument();
   });
 });

@@ -46,21 +46,21 @@ export function AppShell() {
       >
         Skip to main content
       </a>
-      <aside className="hidden h-screen border-r border-white/6 bg-[var(--sidebar)] shadow-[10px_0_30px_rgba(0,0,0,0.22)] lg:block">
+      <aside className="relative hidden h-screen border-r border-white/6 bg-[var(--sidebar)] shadow-[var(--sidebar-shadow)] lg:block">
         <Sidebar onNewChat={clearDraft} />
       </aside>
 
       <div className="min-w-0">
-        <header className="sticky top-0 z-20 border-b border-white/6 bg-[rgba(15,23,34,0.88)] px-4 py-4 backdrop-blur lg:px-7">
-          <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
+        <header className="border-b border-white/6 bg-[rgba(15,23,34,0.88)] px-6 py-[18px] backdrop-blur lg:px-7">
+          <div className="mx-auto flex max-w-[1280px] items-center justify-between gap-4">
             <div className="min-w-0">
-              <p className="font-mono text-[0.72rem] uppercase tracking-[0.18em] text-slate-500">
+              <p className="font-mono text-[0.72rem] uppercase tracking-[0.18em] text-[#7f95b8]">
                 {meta.eyebrow}
               </p>
-              <h1 className="mt-1 text-lg font-semibold text-white">
+              <h1 className="mt-2 text-[1.05rem] font-semibold text-white">
                 {meta.title}
               </h1>
-              <p className="mt-1 hidden text-sm text-slate-400 sm:block">
+              <p className="mt-2 hidden text-[0.92rem] text-[var(--muted)] sm:block">
                 {meta.description}
               </p>
             </div>
@@ -71,20 +71,20 @@ export function AppShell() {
                 onClick={openMobileSidebar}
                 aria-expanded={isMobileSidebarOpen}
                 aria-controls="mobile-navigation-menu"
-                className="inline-flex items-center rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium text-slate-100 transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] lg:hidden"
+                className="inline-flex items-center rounded-[14px] border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium text-slate-100 transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] lg:hidden"
               >
                 Menu
               </button>
-              <span className="hidden rounded-full border border-white/10 bg-[var(--panel-soft)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-slate-400 sm:inline-flex">
+              <span className="hidden rounded-full border border-[var(--line)] bg-[#223044] px-3 py-1 text-[0.76rem] font-semibold uppercase tracking-[0.14em] text-[var(--muted)] sm:inline-flex">
                 v1 shell
               </span>
             </div>
           </div>
         </header>
 
-        <main id="app-main-content" className="px-4 py-4 lg:px-7 lg:py-6">
-          <div className="mx-auto max-w-7xl">
-            <div className="min-h-[calc(100vh-7.5rem)] overflow-hidden rounded-[28px] border border-white/6 bg-[var(--panel)] shadow-[0_24px_60px_rgba(0,0,0,0.28)]">
+        <main id="app-main-content" className="bg-[linear-gradient(180deg,rgba(255,255,255,0.01),transparent)] px-6 py-6 lg:px-7">
+          <div className="mx-auto max-w-[1280px]">
+            <div className="h-[calc(100vh-8.3rem)] min-h-[640px] overflow-hidden rounded-[24px] border border-white/6 bg-[var(--panel)] shadow-[inset_0_1px_0_rgba(255,255,255,0.03),var(--shadow)]">
               <Outlet />
             </div>
           </div>

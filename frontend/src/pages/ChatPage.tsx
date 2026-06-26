@@ -29,7 +29,9 @@ export function ChatPage() {
   } = useChatMessages(chatId);
   const setDraft = useChatDraftStore((state) => state.setDraft);
   const clearDraft = useChatDraftStore((state) => state.clearDraft);
-  const pushNotification = useNotificationStore((state) => state.pushNotification);
+  const pushNotification = useNotificationStore(
+    (state) => state.pushNotification,
+  );
   const documents = Array.isArray(documentsData) ? documentsData : [];
   const messages = Array.isArray(messagesData) ? messagesData : [];
   const hasCompletedDocuments = documents.some(
@@ -69,16 +71,13 @@ export function ChatPage() {
   }
 
   const shouldShowTranscript =
-    hasPersistedChat || isStreaming || messages.length > 0 || Boolean(streamingMessage);
+    hasPersistedChat ||
+    isStreaming ||
+    messages.length > 0 ||
+    Boolean(streamingMessage);
 
   return (
-    <section className="grid min-h-[calc(100vh-7.5rem)] grid-rows-[auto_1fr_auto]">
-      <ChatHeader
-        title={hasPersistedChat ? "Conversation" : "Start a new conversation"}
-        description={hasPersistedChat ? undefined : "Open a fresh thread grounded in your uploaded corpus."}
-        eyebrow={hasPersistedChat ? "Chat transcript" : "New chat"}
-      />
-
+    <section className="grid h-full min-h-0 grid-rows-[auto_1fr_auto]">
       <div className="min-h-0">
         {shouldShowTranscript ? (
           <MessageList
@@ -97,7 +96,9 @@ export function ChatPage() {
             isCheckingDocuments={isLoadingDocuments}
             isDocumentsError={isDocumentsError}
             documentsErrorMessage={
-              documentsError instanceof Error ? documentsError.message : undefined
+              documentsError instanceof Error
+                ? documentsError.message
+                : undefined
             }
             onSelectPrompt={handleSelectPrompt}
             onRetryDocuments={() => void refetchDocuments()}
@@ -107,12 +108,17 @@ export function ChatPage() {
 
       <div className="sticky bottom-0">
         {error ? (
-          <div className="border-t border-rose-400/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-100 lg:px-8" role="alert">
-            <div className="mx-auto flex w-full max-w-3xl flex-wrap items-center justify-between gap-3">
+          <div
+            className="border-t border-rose-400/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-100 lg:px-8"
+            role="alert"
+          >
+            <div className="mx-auto flex w-full max-w-[780px] flex-wrap items-center justify-between gap-3">
               <p>{error}</p>
               <button
                 type="button"
-                onClick={() => void (chatId ? refetchMessages() : refetchDocuments())}
+                onClick={() =>
+                  void (chatId ? refetchMessages() : refetchDocuments())
+                }
                 className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
               >
                 Refresh state

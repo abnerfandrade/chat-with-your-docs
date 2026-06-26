@@ -19,25 +19,25 @@ const navItems = [
 
 export function SidebarNav({ onNavigate }: SidebarNavProps) {
   return (
-    <nav aria-label="Primary navigation" className="flex flex-col gap-2">
+    <nav aria-label="Primary navigation" className="flex flex-col gap-[6px]">
       {navItems.map((item) => (
         <NavLink
           key={item.to}
           to={item.to}
           onClick={onNavigate}
-                className={({ isActive }) =>
-                  [
-                    "rounded-2xl border px-3 py-3 text-left transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]",
-                    isActive
-                      ? "border-white/10 bg-white/10 shadow-[inset_3px_0_0_rgba(124,199,192,0.55)]"
-                      : "border-transparent hover:bg-white/6",
+          className={({ isActive }) =>
+            [
+              "rounded-[12px] border px-3 py-3 text-left transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]",
+              isActive
+                ? "border-white/8 bg-white/10 shadow-[inset_3px_0_0_rgba(124,199,192,0.55)]"
+                : "border-transparent hover:bg-white/6",
             ].join(" ")
           }
         >
-          <strong className="block text-sm font-semibold text-slate-50">
+          <strong className="block text-[0.9rem] font-semibold text-slate-50">
             {item.label}
           </strong>
-          <span className="mt-1.5 block text-sm leading-6 text-slate-400">
+          <span className="mt-[5px] block text-[0.78rem] leading-7 text-[rgba(243,243,241,0.52)]">
             {item.description}
           </span>
         </NavLink>
