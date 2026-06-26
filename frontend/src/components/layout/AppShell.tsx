@@ -2,6 +2,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { useChatDraftStore } from "@/stores/useChatDraftStore";
 import { MobileSidebar } from "./MobileSidebar";
+import { NotificationCenter } from "./NotificationCenter";
 import { Sidebar } from "./Sidebar";
 
 function getShellMeta(pathname: string) {
@@ -80,6 +81,7 @@ export function AppShell() {
       </div>
 
       <MobileSidebar />
+      <NotificationCenter />
     </div>
   );
 }

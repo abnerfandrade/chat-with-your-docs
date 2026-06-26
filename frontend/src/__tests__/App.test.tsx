@@ -35,7 +35,7 @@ describe("App routing", () => {
     renderWithProviders(<App />, { route: "/documents" });
 
     expect(
-      screen.getByRole("heading", { name: /documents library/i }),
+      screen.getByRole("heading", { name: /build and monitor the shared corpus/i }),
     ).toBeInTheDocument();
   });
 });
