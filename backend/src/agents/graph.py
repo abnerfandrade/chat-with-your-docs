@@ -15,7 +15,7 @@ def route_after_guardrails(state: ChatGraphState) -> str:
     if decision.verdict == "allow":
         return "answer_agent_node"
 
-    if decision.verdict in {"refuse", "needs_clarification"}:
+    if decision.verdict == "refuse":
         return END
 
     raise ValueError(f"Unsupported guardrails verdict: '{decision.verdict}'")

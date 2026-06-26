@@ -24,7 +24,7 @@ def test_route_after_guardrails_routes_to_answer_agent_for_allow():
     assert route == "answer_agent_node"
 
 
-@pytest.mark.parametrize("verdict", ["refuse", "needs_clarification"])
+@pytest.mark.parametrize("verdict", ["refuse"])
 def test_route_after_guardrails_routes_to_end_for_non_allow(verdict: str):
     route = route_after_guardrails(
         {

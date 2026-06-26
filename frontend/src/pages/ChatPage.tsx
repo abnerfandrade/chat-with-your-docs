@@ -17,7 +17,6 @@ export function ChatPage() {
     data: documentsData,
     error: documentsError,
     isError: isDocumentsError,
-    isLoading: isLoadingDocuments,
     refetch: refetchDocuments,
   } = useDocuments();
   const {
@@ -27,7 +26,6 @@ export function ChatPage() {
     isLoading: isLoadingMessages,
     refetch: refetchMessages,
   } = useChatMessages(chatId);
-  const setDraft = useChatDraftStore((state) => state.setDraft);
   const clearDraft = useChatDraftStore((state) => state.clearDraft);
   const pushNotification = useNotificationStore(
     (state) => state.pushNotification,
@@ -56,10 +54,6 @@ export function ChatPage() {
       description: error,
     });
   }, [error, pushNotification]);
-
-  function handleSelectPrompt(prompt: string) {
-    setDraft(prompt);
-  }
 
   async function handleSubmit(message: string) {
     if (!message.trim()) {
@@ -97,15 +91,12 @@ export function ChatPage() {
           />
         ) : (
           <ChatEmptyState
-            hasCompletedDocuments={hasCompletedDocuments}
-            isCheckingDocuments={isLoadingDocuments}
             isDocumentsError={isDocumentsError}
             documentsErrorMessage={
               documentsError instanceof Error
                 ? documentsError.message
                 : undefined
             }
-            onSelectPrompt={handleSelectPrompt}
             onRetryDocuments={() => void refetchDocuments()}
           />
         )}
@@ -132,7 +123,7 @@ export function ChatPage() {
           </div>
         ) : null}
         <ChatComposer
-          isInputEnabled={hasCompletedDocuments}
+          hasCompletedDocuments={hasCompletedDocuments}
           isStreaming={isStreaming}
           onSubmit={handleSubmit}
         />

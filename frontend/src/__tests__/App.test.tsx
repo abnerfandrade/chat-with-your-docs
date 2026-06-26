@@ -6,7 +6,7 @@ describe("App routing", () => {
     renderWithProviders(<App />);
 
     expect(
-      screen.getByText(/ask grounded questions against the shared document corpus/i),
+      screen.getByText(/if documents are available, the assistant can use them for grounded answers/i),
     ).toBeInTheDocument();
   });
 
@@ -14,7 +14,7 @@ describe("App routing", () => {
     renderWithProviders(<App />, { route: "/missing-route" });
 
     expect(
-      screen.getByText(/ask grounded questions against the shared document corpus/i),
+      screen.getByText(/if documents are available, the assistant can use them for grounded answers/i),
     ).toBeInTheDocument();
   });
 

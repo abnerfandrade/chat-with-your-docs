@@ -2,20 +2,19 @@ import type { FormEvent, KeyboardEvent } from "react";
 import { useChatDraftStore } from "@/stores/useChatDraftStore";
 
 type ChatComposerProps = {
-  isInputEnabled: boolean;
+  hasCompletedDocuments?: boolean;
   isStreaming?: boolean;
   onSubmit: (message: string) => void;
 };
 
 export function ChatComposer({
-  isInputEnabled,
+  hasCompletedDocuments = false,
   isStreaming = false,
   onSubmit,
 }: ChatComposerProps) {
   const draft = useChatDraftStore((state) => state.draft);
   const setDraft = useChatDraftStore((state) => state.setDraft);
-  const isSubmitDisabled =
-    !isInputEnabled || isStreaming || draft.trim().length === 0;
+  const isSubmitDisabled = isStreaming || draft.trim().length === 0;
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -39,7 +38,7 @@ export function ChatComposer({
             aria-describedby="chat-composer-help"
             value={draft}
             onChange={(event) => setDraft(event.target.value)}
-            disabled={!isInputEnabled || isStreaming}
+            disabled={isStreaming}
             rows={4}
             onKeyDown={(event: KeyboardEvent<HTMLTextAreaElement>) => {
               if (event.key === "Enter" && !event.shiftKey) {
@@ -50,9 +49,9 @@ export function ChatComposer({
               }
             }}
             placeholder={
-              isInputEnabled
+              hasCompletedDocuments
                 ? "Ask a follow-up question about the uploaded sources..."
-                : "Upload and process at least one document to enable chat input."
+                : "Ask a question. If no documents are ready yet, the assistant may say it does not have enough information."
             }
             className="min-h-[84px] flex-1 resize-none border-0 bg-transparent px-3 py-[10px] text-[0.92rem] leading-[1.6] text-[var(--muted)] outline-none transition placeholder:text-slate-500 disabled:cursor-not-allowed disabled:text-slate-500 focus-visible:outline-none"
           />
@@ -65,11 +64,11 @@ export function ChatComposer({
           </button>
         </div>
         <p id="chat-composer-help" className="mt-[10px] text-[0.8rem] text-[var(--muted)]">
-          {!isInputEnabled
-            ? "Chat input unlocks after at least one document finishes processing."
-            : isStreaming
+          {isStreaming
               ? "The assistant is streaming a response. You can send the next turn when it finishes."
-              : "Active chat view stays minimal. Large intro content should only appear in an empty state."}
+              : hasCompletedDocuments
+                ? "Active chat view stays minimal. Large intro content should only appear in an empty state."
+                : "You can start the conversation without documents, but grounded answers depend on uploaded sources."}
         </p>
       </form>
     </div>

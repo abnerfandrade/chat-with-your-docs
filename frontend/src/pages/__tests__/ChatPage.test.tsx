@@ -54,7 +54,7 @@ describe("ChatPage", () => {
     jest.restoreAllMocks();
   });
 
-  it("shows the documents CTA when no completed documents are available", async () => {
+  it("keeps chat available when no completed documents are available", async () => {
     jest.spyOn(apiClient, "get").mockImplementation((url) => {
       if (url === "/documents/") {
         return Promise.resolve({
@@ -70,17 +70,14 @@ describe("ChatPage", () => {
     renderWithProviders(<App />, { route: "/chat" });
 
     expect(
-      await screen.findByText(
-        /upload documents before starting the first chat/i,
-      ),
+      await screen.findByRole("heading", {
+        name: /start a new conversation/i,
+      }),
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole("link", { name: /open documents/i }),
-    ).toBeInTheDocument();
-    expect(screen.getByLabelText(/message composer/i)).toBeDisabled();
+    expect(screen.getByLabelText(/message composer/i)).toBeEnabled();
   });
 
-  it("shows starter prompts when completed documents exist", async () => {
+  it("shows the same empty state when completed documents exist", async () => {
     jest.spyOn(apiClient, "get").mockImplementation((url) => {
       if (url === "/documents/") {
         return Promise.resolve({
@@ -107,8 +104,8 @@ describe("ChatPage", () => {
     renderWithProviders(<App />, { route: "/chat" });
 
     expect(
-      await screen.findByRole("button", {
-        name: /summarize the main themes across the uploaded documents/i,
+      await screen.findByRole("heading", {
+        name: /start a new conversation/i,
       }),
     ).toBeInTheDocument();
     expect(screen.getByLabelText(/message composer/i)).toBeEnabled();
@@ -198,7 +195,7 @@ describe("ChatPage", () => {
 
     expect(
       await screen.findByRole("heading", {
-        name: /we couldn't confirm whether chat is ready/i,
+        name: /we couldn't load the current corpus status/i,
       }),
     ).toBeInTheDocument();
 
@@ -207,6 +204,71 @@ describe("ChatPage", () => {
       .click(screen.getByRole("button", { name: /retry corpus check/i }));
 
     expect(getSpy).toHaveBeenCalledWith("/documents/");
+  });
+
+  it("starts a new chat even when there are no uploaded documents", async () => {
+    const user = userEvent.setup();
+
+    jest.spyOn(apiClient, "get").mockImplementation((url) => {
+      if (url === "/documents/") {
+        return Promise.resolve({
+          data: [],
+        } as Awaited<ReturnType<typeof apiClient.get>>);
+      }
+
+      if (url === "/chats/empty-corpus-chat/messages") {
+        return Promise.resolve({
+          data: [
+            {
+              id: "msg-user-1",
+              chat_id: "empty-corpus-chat",
+              role: "user",
+              content: "Can you summarize our company policies?",
+              citations: [],
+              created_at: "2026-06-25T12:00:00Z",
+            },
+            {
+              id: "msg-assistant-1",
+              chat_id: "empty-corpus-chat",
+              role: "assistant",
+              content: "I do not have enough information from uploaded documents to answer that yet.",
+              citations: [],
+              created_at: "2026-06-25T12:00:02Z",
+            },
+          ],
+        } as Awaited<ReturnType<typeof apiClient.get>>);
+      }
+
+      return Promise.resolve({
+        data: [],
+      } as Awaited<ReturnType<typeof apiClient.get>>);
+    });
+
+    jest.spyOn(global, "fetch").mockResolvedValue(
+      createSseResponse([
+        {
+          delay: 0,
+          value:
+            'event: chat_id\ndata: {"chat_id":"empty-corpus-chat"}\n\n' +
+            'event: content\ndata: {"text":"I do not have enough information from uploaded documents to answer that yet."}\n\n' +
+            'event: citations\ndata: {"citations":[]}\n\n' +
+            "event: done\ndata: [DONE]\n\n",
+        },
+      ]),
+    );
+
+    renderWithProviders(<App />, { route: "/chat" });
+
+    const composer = await screen.findByLabelText(/message composer/i);
+    await user.type(composer, "Can you summarize our company policies?");
+    await user.click(screen.getByRole("button", { name: /send/i }));
+
+    expect(
+      await screen.findByText(
+        /i do not have enough information from uploaded documents to answer that yet\./i,
+      ),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/can you summarize our company policies\?/i)).toBeInTheDocument();
   });
 
   it("shows a recoverable error state when transcript loading fails", async () => {
@@ -261,14 +323,13 @@ describe("ChatPage", () => {
 
   it("streams the first reply, disables the composer, and renders citations", async () => {
     const user = userEvent.setup();
-    const starterPrompt =
-      "Summarize the main themes across the uploaded documents.";
+    const userMessage = "Summarize the main themes across the uploaded documents.";
     let generatedMessages: MessageResponse[] = [
       {
         id: "msg-user-1",
         chat_id: "generated-chat",
         role: "user",
-        content: starterPrompt,
+        content: userMessage,
         citations: [],
         created_at: "2026-06-25T12:00:00Z",
       },
@@ -348,14 +409,9 @@ describe("ChatPage", () => {
 
     renderWithProviders(<App />, { route: "/chat" });
 
-    await user.click(
-      await screen.findByRole("button", {
-        name: /summarize the main themes across the uploaded documents/i,
-      }),
-    );
-
-    expect(screen.getByLabelText(/message composer/i)).toHaveValue(
-      starterPrompt,
+    await user.type(
+      await screen.findByLabelText(/message composer/i),
+      userMessage,
     );
 
     const sendButton = screen.getByRole("button", { name: /send/i });

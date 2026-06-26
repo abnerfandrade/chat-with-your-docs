@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 
 class GuardrailsDecision(BaseModel):
-    verdict: Literal["allow", "refuse", "needs_clarification"] = Field(
+    verdict: Literal["allow", "refuse"] = Field(
         ...,
         description="Guardrails verdict for the latest user message",
     )

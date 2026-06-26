@@ -56,36 +56,6 @@ async def test_guardrails_node_returns_refusal_decision(mocker):
     assert "can't help" in result["guardrails_decision"].message_to_user
 
 
-@pytest.mark.asyncio
-async def test_guardrails_node_returns_needs_clarification_decision_from_messages(mocker):
-    model = mocker.Mock()
-    model.ainvoke = mocker.AsyncMock(
-        return_value=GuardrailsDecision(
-            verdict="needs_clarification",
-            reason="The request is too vague",
-            message_to_user="Could you clarify what you want to know about the documents?",
-        )
-    )
-    llm = mocker.Mock()
-    llm.with_structured_output.return_value = model
-    mocker.patch(
-        "src.agents.guardrails.node.get_llm",
-        return_value=llm,
-    )
-
-    result = await guardrails_node(
-        {
-            "messages": [
-                AIMessage(content="Previous answer"),
-                HumanMessage(content="help me with this"),
-            ]
-        }
-    )
-
-    assert result["guardrails_decision"].verdict == "needs_clarification"
-    assert "clarify" in result["guardrails_decision"].message_to_user.lower()
-
-
 def test_extract_latest_user_message_prefers_explicit_state_value():
     message = _extract_latest_user_message(
         {

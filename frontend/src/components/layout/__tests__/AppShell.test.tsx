@@ -107,7 +107,7 @@ describe("AppShell layout", () => {
 
     expect(useChatDraftStore.getState().draft).toBe("");
     expect(
-      screen.getByText(/ask grounded questions against the shared document corpus/i),
+      screen.getByText(/if documents are available, the assistant can use them for grounded answers/i),
     ).toBeInTheDocument();
   });
 

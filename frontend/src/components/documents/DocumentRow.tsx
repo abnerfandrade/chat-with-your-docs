@@ -1,8 +1,5 @@
 import type { DocumentResponse } from "@/types/document";
-import {
-  formatDocumentTimestamp,
-  formatFileSize,
-} from "@/lib/documents";
+import { formatDocumentTimestamp, formatFileSize } from "@/lib/documents";
 import { StatusBadge } from "./StatusBadge";
 
 type DocumentRowProps = {
@@ -33,7 +30,10 @@ export function DocumentRow({ document }: DocumentRowProps) {
         <div className="mt-[10px] flex flex-wrap gap-4 text-[0.78rem] text-[var(--muted)]">
           <span>{formatFileSize(document.size_bytes)}</span>
           <span>
-            Updated {formatDocumentTimestamp(document.updated_at ?? document.created_at)}
+            Updated{" "}
+            {formatDocumentTimestamp(
+              document.updated_at ?? document.created_at,
+            )}
           </span>
           <span>{document.status === "completed" ? "Indexed" : "Pending"}</span>
         </div>
@@ -43,12 +43,6 @@ export function DocumentRow({ document }: DocumentRowProps) {
           {extensionLabel}
         </span>
         <StatusBadge status={document.status} />
-        <button
-          type="button"
-          className="rounded-[12px] border border-[var(--line)] bg-transparent px-3 py-[9px] text-[0.8rem] font-semibold text-[var(--text)] transition hover:bg-white/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
-        >
-          View details
-        </button>
       </div>
     </article>
   );
