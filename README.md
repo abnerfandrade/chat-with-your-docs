@@ -217,7 +217,7 @@ npm test
 
 ## Backend
 
-I decided to use the technologies I have more experience with and decided to follow a pattern that I am used to with FastAPI microservices. So I like to separate the components by domain in specific folders.
+I decided to use the technologies I have more experience with, like FastAPI, LangGraph, LangChain, PostgreSQL, and Qdrant, and decided to follow a pattern that I am used to with FastAPI microservices, where I separate the components by domain in specific folders.
 
 ### About the folder structure
 
