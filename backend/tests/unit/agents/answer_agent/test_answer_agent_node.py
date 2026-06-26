@@ -1,3 +1,5 @@
+from unittest.mock import call
+
 import pytest
 from langchain_core.messages import AIMessageChunk, HumanMessage
 
@@ -93,11 +95,74 @@ async def test_answer_agent_node_extracts_structured_response(mocker):
     )
 
 
+@pytest.mark.asyncio
+async def test_answer_agent_node_streams_only_answer_text_from_structured_output(mocker):
+    agent = mocker.Mock()
+    agent.astream = mocker.Mock(return_value=_build_structured_answer_agent_stream())
+    mocker.patch("src.agents.answer_agent.node.get_answer_agent", return_value=agent)
+    writer = mocker.Mock()
+    mocker.patch("src.agents.answer_agent.node.get_stream_writer", return_value=writer)
+
+    result = await answer_agent_node(
+        {
+            "messages": [HumanMessage(content="What is the policy?")],
+            "latest_user_message": "What is the policy?",
+            "guardrails_decision": None,
+            "answer_text": None,
+            "citations": [],
+        }
+    )
+
+    assert result["answer_text"] == "The policy requires manager approval."
+    assert len(result["citations"]) == 1
+    assert writer.call_args_list == [
+        call({"event": "content", "text": "The policy requires "}),
+        call({"event": "content", "text": "manager approval."}),
+    ]
+
+
 async def _build_answer_agent_stream():
     yield (
         "messages",
         (
             AIMessageChunk(content="The policy requires manager approval."),
+            {},
+        ),
+    )
+    yield (
+        "values",
+        {
+            "structured_response": AnswerAgentResult(
+                answer_text="The policy requires manager approval.",
+                citations=[
+                    CitationPayload(
+                        document_id="doc-1",
+                        source="policy.md",
+                        chunk_id="doc-1::chunk::0",
+                        page=None,
+                        snippet="Manager approval is required.",
+                    )
+                ],
+            )
+        },
+    )
+
+
+async def _build_structured_answer_agent_stream():
+    yield ("messages", (AIMessageChunk(content="{"), {}))
+    yield ("messages", (AIMessageChunk(content='"answer_text"'), {}))
+    yield ("messages", (AIMessageChunk(content=': "The policy requires '), {}))
+    yield ("messages", (AIMessageChunk(content='manager approval."'), {}))
+    yield (
+        "messages",
+        (
+            AIMessageChunk(
+                content=(
+                    ', "citations": [{"document_id":"doc-1","source":"policy.md",'
+                    '"chunk_id":"doc-1::chunk::0","page":null,'
+                    '"snippet":"Manager approval is required."}]}'
+                )
+            ),
             {},
         ),
     )

@@ -4,13 +4,14 @@ from functools import lru_cache
 from typing import Any, TYPE_CHECKING
 
 from langchain.agents import create_agent
-from langchain_core.messages import AIMessage, AIMessageChunk
+from langchain_core.messages import AIMessage
 from langgraph.config import get_stream_writer
 from loguru import logger
 
 from src.agents.llm import get_llm
 from src.agents.answer_agent.datatypes import AnswerAgentResult
 from src.agents.answer_agent.middlewares import build_answer_agent_middlewares
+from src.agents.streaming import StructuredFieldStreamExtractor, extract_message_text
 from src.agents.answer_agent.tools import search_documents
 from src.agents.answer_agent.prompt import SYSTEM_PROMPT
 
@@ -29,39 +30,16 @@ def get_answer_agent():
         response_format=AnswerAgentResult,
     )
 
-
-def _extract_stream_text(chunk: Any) -> str:
-    if isinstance(chunk, AIMessageChunk):
-        content = chunk.content
-    else:
-        content = getattr(chunk, "content", "")
-
-    if isinstance(content, str):
-        return content
-
-    if isinstance(content, list):
-        parts: list[str] = []
-        for item in content:
-            if isinstance(item, str):
-                parts.append(item)
-                continue
-
-            if isinstance(item, dict):
-                text = item.get("text")
-                if isinstance(text, str):
-                    parts.append(text)
-
-        return "".join(parts)
-
-    return ""
-
-
 async def answer_agent_node(state: ChatGraphState) -> dict[str, Any]:
     log = logger.bind(service="answer_agent_node")
     log.debug("Invoking answer agent node")
 
     agent = get_answer_agent()
     writer = get_stream_writer()
+    stream_extractor = StructuredFieldStreamExtractor(
+        schema=AnswerAgentResult,
+        field_name="answer_text",
+    )
 
     raw_result: dict | None = None
     async for mode, payload in agent.astream(
@@ -70,7 +48,7 @@ async def answer_agent_node(state: ChatGraphState) -> dict[str, Any]:
     ):
         if mode == "messages":
             message_chunk, _ = payload
-            text = _extract_stream_text(message_chunk)
+            text = stream_extractor.feed(extract_message_text(message_chunk))
             if text:
                 writer({"event": "content", "text": text})
             continue
