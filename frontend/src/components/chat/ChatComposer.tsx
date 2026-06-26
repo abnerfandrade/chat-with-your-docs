@@ -28,8 +28,8 @@ export function ChatComposer({
   }
 
   return (
-    <div className="border-t border-[var(--line)] bg-[linear-gradient(180deg,rgba(24,34,48,0.4),#182230_30%)] px-6 py-[18px] supports-[padding:max(0px)]:pb-[max(1.5rem,env(safe-area-inset-bottom))]">
-      <form onSubmit={handleSubmit} className="mx-auto flex w-full max-w-[780px] flex-col">
+    <div className="border-t border-[var(--line)] bg-[linear-gradient(180deg,rgba(24,34,48,0.4),#182230_30%)] px-6 pb-6 pt-[18px]">
+      <form onSubmit={handleSubmit}>
         <label className="sr-only" htmlFor="chat-composer">
           Message composer
         </label>
@@ -59,7 +59,7 @@ export function ChatComposer({
           <button
             type="submit"
             disabled={isSubmitDisabled}
-            className="rounded-[14px] border-0 bg-[var(--accent)] px-4 py-[11px] text-[0.92rem] font-semibold text-[#10202a] transition hover:brightness-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:bg-[#243245] disabled:text-[var(--muted)]"
+            className="rounded-[14px] border-0 bg-[#7cc7c0] px-4 py-[11px] font-semibold text-[#10202a] transition hover:brightness-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:bg-[#243245] disabled:text-[var(--muted)]"
           >
             {isStreaming ? "Streaming..." : "Send"}
           </button>

@@ -78,6 +78,11 @@ export function ChatPage() {
 
   return (
     <section className="grid h-full min-h-0 grid-rows-[auto_1fr_auto]">
+      <ChatHeader
+        title="Chat"
+        description="Clean active conversation view with citations shown inside assistant answers."
+      />
+
       <div className="min-h-0">
         {shouldShowTranscript ? (
           <MessageList
@@ -112,7 +117,7 @@ export function ChatPage() {
             className="border-t border-rose-400/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-100 lg:px-8"
             role="alert"
           >
-            <div className="mx-auto flex w-full max-w-[780px] flex-wrap items-center justify-between gap-3">
+            <div className="flex w-full flex-wrap items-center justify-between gap-3">
               <p>{error}</p>
               <button
                 type="button"

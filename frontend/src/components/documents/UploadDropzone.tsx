@@ -28,41 +28,29 @@ export function UploadDropzone({
   }
 
   return (
-    <section
-      aria-labelledby="upload-dropzone-heading"
-      className="rounded-[18px] border border-dashed border-[var(--line-strong)] bg-[var(--panel-soft)] px-5 py-5"
-    >
-      <div className="flex flex-col gap-[18px] lg:flex-row lg:items-center lg:justify-between">
+    <section aria-labelledby="upload-dropzone-heading">
+      <div className="flex flex-col gap-[18px] rounded-[18px] border border-dashed border-[var(--line-strong)] bg-[var(--panel-soft)] p-5 mb-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <p
-            id="upload-dropzone-heading"
-            className="font-mono text-[0.72rem] uppercase tracking-[0.12em] text-[#8ba2c6]"
+          <strong id="upload-dropzone-heading" className="block text-[0.94rem]">
+            Drop files here or select documents to upload
+          </strong>
+          <span
+            id="upload-dropzone-copy"
+            className="mt-[6px] block text-[0.84rem] leading-[1.5] text-[var(--muted)]"
           >
-            Upload source documents
-          </p>
-          <h2 className="mt-3 text-[0.94rem] font-semibold text-white">
-            Add files to the shared corpus
-          </h2>
-          <p className="mt-[6px] max-w-[42rem] text-[0.84rem] leading-7 text-[var(--muted)]">
-          <span id="upload-dropzone-copy">
-            Supported file types: `.txt`, `.md`, and `.pdf`. Individual files
-            can be up to {MAX_UPLOAD_SIZE_MB}MB and start processing immediately
-            after upload.
+            Supported: .txt, .md, and .pdf up to {MAX_UPLOAD_SIZE_MB}MB. Use
+            notifications for upload progress and processing feedback.
           </span>
-          </p>
         </div>
 
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-[10px]">
           <button
             type="button"
             onClick={focusInput}
-            className="rounded-[12px] border-0 bg-[var(--accent)] px-[14px] py-[10px] text-[0.84rem] font-semibold text-[#10202a] transition hover:brightness-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
+            className="cursor-pointer rounded-[12px] border-0 bg-[#7cc7c0] px-[14px] py-[10px] font-semibold text-[#10202a] transition hover:brightness-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
           >
-            Choose files
+            Upload document
           </button>
-          <span className="rounded-[12px] border border-[var(--line-strong)] bg-[#1a2432] px-[14px] py-[10px] text-[0.84rem] text-[var(--text)]">
-            Multiple files supported
-          </span>
         </div>
       </div>
 

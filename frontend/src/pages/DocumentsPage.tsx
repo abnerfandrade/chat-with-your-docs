@@ -179,35 +179,57 @@ export function DocumentsPage() {
     }
   }
 
+  const completedCount = documents.filter((d) => d.status === "completed").length;
+  const uniqueExtensions = new Set(
+    documents.map((d) => d.filename.split(".").pop()?.toLowerCase()).filter(Boolean),
+  );
+
   return (
-    <section className="grid h-full min-h-0 grid-rows-[auto_auto_auto_1fr]">
-      <header className="border-b border-[var(--line)] px-[22px] py-[22px]">
-        <p className="font-mono text-[0.72rem] uppercase tracking-[0.12em] text-[#8ba2c6]">
-          Documents library
-        </p>
-        <h2 className="mt-3 text-[1.55rem] font-semibold tracking-[-0.03em] text-white">
-          Build and monitor the shared corpus
-        </h2>
-        <p className="mt-[10px] max-w-[760px] text-[0.92rem] leading-7 text-[var(--muted)]">
-          Upload source files, track ingestion progress, and keep the retrieval
-          library ready for grounded chats.
-        </p>
+    <section className="grid h-full min-h-0 grid-rows-[auto_auto_1fr]">
+      {/* Topbar — matches the preview's .topbar */}
+      <header className="flex items-center justify-between gap-4 border-b border-[var(--line)] bg-[var(--panel)] px-[22px] py-[18px]">
+        <div>
+          <h1 className="m-0 text-[1rem] font-semibold">Documents</h1>
+          <p className="mt-[6px] text-[0.88rem] text-[var(--muted)]">
+            Upload and manage the shared knowledge base in one focused place.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-[10px]">
+          <span className="rounded-full border border-[var(--line)] bg-[var(--panel-soft)] px-[10px] py-2 text-[0.76rem] font-semibold text-[var(--muted)]">
+            {documents.length} file{documents.length === 1 ? "" : "s"}
+          </span>
+          <span className="rounded-full border border-[var(--line)] bg-[var(--panel-soft)] px-[10px] py-2 text-[0.76rem] font-semibold text-[var(--muted)]">
+            {uniqueExtensions.size} format{uniqueExtensions.size === 1 ? "" : "s"}
+          </span>
+        </div>
       </header>
 
-      <div className="px-[22px] py-[18px]">
-        <DocumentStats documents={documents} />
-      </div>
+      {/* Documents intro — matches the preview's .documents-intro */}
+      <section className="border-b border-[var(--line)] px-[22px] py-[22px]">
+        <h2 className="m-0 text-[1.55rem] font-semibold tracking-[-0.03em]">
+          Document library
+        </h2>
+        <p className="mt-[10px] max-w-[760px] leading-[1.6] text-[var(--muted)]">
+          Keep this page simple: upload documents, browse what is already indexed,
+          and use lightweight notifications for background ingestion updates
+          instead of a permanent queue.
+        </p>
+        <div className="mt-[18px]">
+          <DocumentStats documents={documents} completedCount={completedCount} />
+        </div>
+      </section>
 
-      <div className="px-[22px] pb-[18px]">
-        <UploadDropzone
-          isUploading={uploadMutation.isPending}
-          pendingUploads={pendingUploads}
-          validationError={validationError}
-          onFilesSelected={handleFilesSelected}
-        />
-      </div>
+      {/* Documents content — upload, toolbar, library */}
+      <div className="grid min-h-0 grid-rows-[auto_auto_1fr]">
+        <section className="px-[22px] pt-[18px]">
+          <UploadDropzone
+            isUploading={uploadMutation.isPending}
+            pendingUploads={pendingUploads}
+            validationError={validationError}
+            onFilesSelected={handleFilesSelected}
+          />
+        </section>
 
-      <div>
         <DocumentToolbar
           resultCount={visibleDocuments.length}
           searchValue={searchValue}
@@ -215,22 +237,22 @@ export function DocumentsPage() {
           onSearchChange={setSearchValue}
           onSortChange={setSortValue}
         />
-      </div>
 
-      <div className="min-h-0">
-        <DocumentLibrary
-          documents={visibleDocuments}
-          hasDocuments={documents.length > 0}
-          isLoading={isLoading}
-          isError={isDocumentsError}
-          errorMessage={
-            documentsError instanceof Error ? documentsError.message : undefined
-          }
-          hasActiveFilters={searchValue.trim().length > 0 || sortValue !== "newest"}
-          onResetFilters={resetFilters}
-          onFocusUpload={focusUploadInput}
-          onRetry={() => void refetch()}
-        />
+        <div className="min-h-0">
+          <DocumentLibrary
+            documents={visibleDocuments}
+            hasDocuments={documents.length > 0}
+            isLoading={isLoading}
+            isError={isDocumentsError}
+            errorMessage={
+              documentsError instanceof Error ? documentsError.message : undefined
+            }
+            hasActiveFilters={searchValue.trim().length > 0 || sortValue !== "newest"}
+            onResetFilters={resetFilters}
+            onFocusUpload={focusUploadInput}
+            onRetry={() => void refetch()}
+          />
+        </div>
       </div>
     </section>
   );

@@ -6,7 +6,7 @@ describe("App routing", () => {
     renderWithProviders(<App />);
 
     expect(
-      screen.getByText(/open a fresh thread grounded in your uploaded corpus/i),
+      screen.getByText(/ask grounded questions against the shared document corpus/i),
     ).toBeInTheDocument();
   });
 
@@ -14,7 +14,7 @@ describe("App routing", () => {
     renderWithProviders(<App />, { route: "/missing-route" });
 
     expect(
-      screen.getByText(/open a fresh thread grounded in your uploaded corpus/i),
+      screen.getByText(/ask grounded questions against the shared document corpus/i),
     ).toBeInTheDocument();
   });
 
@@ -22,7 +22,7 @@ describe("App routing", () => {
     renderWithProviders(<App />, { route: "/chat/quarterly-plan" });
 
     expect(
-      screen.getByRole("heading", { name: /conversation/i }),
+      screen.getByRole("heading", { name: /^chat$/i }),
     ).toBeInTheDocument();
     expect(
       await screen.findByText(
@@ -35,7 +35,7 @@ describe("App routing", () => {
     renderWithProviders(<App />, { route: "/documents" });
 
     expect(
-      screen.getByRole("heading", { name: /build and monitor the shared corpus/i }),
+      screen.getByRole("heading", { name: /document library/i }),
     ).toBeInTheDocument();
   });
 });

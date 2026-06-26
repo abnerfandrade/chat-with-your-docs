@@ -6,15 +6,6 @@ type MessageBubbleProps = {
   isStreaming?: boolean;
 };
 
-function formatTimestamp(timestamp: string) {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(new Date(timestamp));
-}
-
 export function MessageBubble({
   message,
   isStreaming = false,
@@ -24,24 +15,16 @@ export function MessageBubble({
   return (
     <article
       className={[
-        "max-w-[780px] rounded-[18px] border px-[18px] py-4 leading-[1.65] shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]",
+        "max-w-[780px] rounded-[18px] border border-[var(--line)] px-[18px] py-4 leading-[1.65]",
         isUser
-          ? "ml-auto border-[var(--line)] bg-[var(--user)]"
-          : "mr-auto border-[var(--line)] bg-[var(--assistant)]",
+          ? "self-end bg-[var(--user)]"
+          : "self-start bg-[var(--assistant)]",
       ].join(" ")}
     >
-      <div className="flex items-center justify-between gap-4">
-        <p className="font-mono text-[0.74rem] uppercase tracking-[0.08em] text-[var(--muted)]">
-          {isUser ? "You" : isStreaming ? "Assistant streaming" : "Assistant"}
-        </p>
-        <time
-          dateTime={message.created_at}
-          className="text-[0.74rem] text-slate-500"
-        >
-          {formatTimestamp(message.created_at)}
-        </time>
+      <div className="message-label mb-2 font-mono text-[0.74rem] uppercase tracking-[0.08em] text-[var(--muted)]">
+        {isUser ? "User" : "Assistant"}
       </div>
-      <p className="mt-3 whitespace-pre-wrap text-[0.94rem] text-slate-100">
+      <p className="whitespace-pre-wrap text-[0.94rem] text-slate-100">
         {message.content}
       </p>
       {!isUser && isStreaming ? (

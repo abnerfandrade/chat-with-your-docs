@@ -16,19 +16,19 @@ export function DocumentRow({ document }: DocumentRowProps) {
   return (
     <article className="grid gap-4 rounded-[16px] border border-[var(--line)] bg-[#1a2432] px-[18px] py-4 lg:grid-cols-[1fr_auto] lg:items-center">
       <div className="min-w-0">
-        <h3 className="truncate text-[0.92rem] font-semibold text-white">
+        <strong className="block truncate text-[0.92rem] font-semibold text-white">
           {document.filename}
-        </h3>
+        </strong>
         {document.error_message ? (
-          <p className="mt-[6px] text-[0.82rem] leading-6 text-rose-200">
+          <span className="mt-[6px] block text-[0.82rem] leading-[1.45] text-rose-200">
             Error: {document.error_message}
-          </p>
+          </span>
         ) : (
-          <p className="mt-[6px] text-[0.82rem] leading-6 text-[var(--muted)]">
+          <span className="mt-[6px] block text-[0.82rem] leading-[1.45] text-[var(--muted)]">
             {document.status === "completed"
               ? "Available across all chats."
               : "Background ingestion is updating this document."}
-          </p>
+          </span>
         )}
         <div className="mt-[10px] flex flex-wrap gap-4 text-[0.78rem] text-[var(--muted)]">
           <span>{formatFileSize(document.size_bytes)}</span>
@@ -43,6 +43,12 @@ export function DocumentRow({ document }: DocumentRowProps) {
           {extensionLabel}
         </span>
         <StatusBadge status={document.status} />
+        <button
+          type="button"
+          className="rounded-[12px] border border-[var(--line)] bg-transparent px-3 py-[9px] text-[0.8rem] font-semibold text-[var(--text)] transition hover:bg-white/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
+        >
+          View details
+        </button>
       </div>
     </article>
   );

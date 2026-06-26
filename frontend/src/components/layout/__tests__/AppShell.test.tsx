@@ -107,7 +107,7 @@ describe("AppShell layout", () => {
 
     expect(useChatDraftStore.getState().draft).toBe("");
     expect(
-      screen.getByText(/open a fresh thread grounded in your uploaded corpus/i),
+      screen.getByText(/ask grounded questions against the shared document corpus/i),
     ).toBeInTheDocument();
   });
 
@@ -122,7 +122,7 @@ describe("AppShell layout", () => {
     );
 
     expect(
-      screen.getByRole("heading", { level: 2, name: /^conversation$/i }),
+      screen.getByRole("heading", { name: /^chat$/i }),
     ).toBeInTheDocument();
     expect(
       await screen.findByText(/conversation history will appear here/i),

@@ -28,7 +28,12 @@ export function DocumentLibrary({
 }: DocumentLibraryProps) {
   if (isLoading) {
     return (
-      <div className="space-y-3 px-[22px] py-[18px]" role="status" aria-live="polite" aria-label="Loading documents">
+      <div
+        className="space-y-3 px-[22px] py-[18px]"
+        role="status"
+        aria-live="polite"
+        aria-label="Loading documents"
+      >
         <span className="sr-only">Loading documents</span>
         <div className="h-24 rounded-[16px] border border-[var(--line)] bg-[#1a2432] animate-pulse" />
         <div className="h-24 rounded-[16px] border border-[var(--line)] bg-[#1a2432] animate-pulse" />
@@ -98,7 +103,7 @@ export function DocumentLibrary({
               <button
                 type="button"
                 onClick={onFocusUpload}
-                className="rounded-[12px] border-0 bg-[var(--accent)] px-4 py-[10px] text-[0.84rem] font-semibold text-[#10202a] transition hover:brightness-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
+                className="cursor-pointer rounded-[12px] border-0 bg-[var(--accent)] px-4 py-[10px] text-[0.84rem] font-semibold text-[#10202a] transition hover:brightness-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
               >
                 Upload documents
               </button>

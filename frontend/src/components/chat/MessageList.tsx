@@ -50,23 +50,23 @@ export function MessageList({
   if (isLoading) {
     return (
       <div
-        className="mx-auto flex w-full max-w-[780px] flex-col gap-[14px] px-6 py-[22px]"
+        className="flex flex-col gap-[14px] px-6 py-[22px]"
         role="status"
         aria-live="polite"
         aria-label="Loading transcript"
       >
         <span className="sr-only">Loading transcript</span>
-        <div className="h-28 rounded-[18px] border border-[var(--line)] bg-[var(--assistant)] animate-pulse" />
-        <div className="ml-auto h-24 w-[85%] rounded-[18px] border border-[var(--line)] bg-[var(--user)] animate-pulse sm:w-[72%]" />
-        <div className="h-32 rounded-[18px] border border-[var(--line)] bg-[var(--assistant)] animate-pulse" />
+        <div className="h-28 max-w-[780px] rounded-[18px] border border-[var(--line)] bg-[var(--assistant)] animate-pulse" />
+        <div className="ml-auto h-24 w-[85%] max-w-[780px] rounded-[18px] border border-[var(--line)] bg-[var(--user)] animate-pulse sm:w-[72%]" />
+        <div className="h-32 max-w-[780px] rounded-[18px] border border-[var(--line)] bg-[var(--assistant)] animate-pulse" />
       </div>
     );
   }
 
   if (isError) {
     return (
-      <div className="mx-auto flex w-full max-w-[780px] flex-1 items-center justify-center px-6 py-10">
-        <div role="alert" className="w-full">
+      <div className="flex flex-1 items-center justify-center px-6 py-10">
+        <div role="alert" className="w-full max-w-[780px]">
           <StatePanel
             eyebrow="Transcript unavailable"
             title="We couldn't load this conversation"
@@ -95,7 +95,7 @@ export function MessageList({
 
   if (messages.length === 0 && !streamingMessage) {
     return (
-      <div className="mx-auto flex w-full max-w-[780px] flex-1 items-center justify-center px-6 py-10">
+      <div className="flex flex-1 items-center justify-center px-6 py-10">
         <StatePanel
           eyebrow="Empty transcript"
           title="Conversation history will appear here"
@@ -112,7 +112,7 @@ export function MessageList({
       className="h-full overflow-y-auto"
       aria-busy={isLoading || Boolean(streamingMessage)}
     >
-      <div className="mx-auto flex w-full max-w-[780px] flex-col gap-[14px] px-6 py-[22px]">
+      <div className="flex flex-col gap-[14px] px-6 py-[22px] pb-6">
         {messages.map((message) => (
           <MessageBubble key={message.id} message={message} />
         ))}
